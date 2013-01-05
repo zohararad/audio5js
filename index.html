@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Audio5 JS Demo</title>
+</head>
+<body>
+  <div>
+    <button id="play">Play</button>
+  </div>
+  <script src="src/audio5.js"></script>
+  <script>
+
+    var btn = document.getElementById('play');
+    var audio5 = new Audio5js({
+      swf_path:'./flash/audio5js.swf',
+      ready: function(){
+        this.load('http://212.29.254.129:7075/;stream.mp3?ns='+new Date().getTime());
+        //this.load('http://s3.amazonaws.com/audiojs/02-juicy-r.mp3');
+        btn.addEventListener('click', this.playPause.bind(this), false);
+      }
+    });
+  </script>
+  <!--<audio src="http://s3.amazonaws.com/audiojs/02-juicy-r.mp3" preload="auto"></audio>-->
+</body>
+</html>
