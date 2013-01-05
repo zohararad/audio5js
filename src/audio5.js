@@ -126,6 +126,7 @@
     duration: 0, /** {Float} audio duration (sec) */
     position: 0, /** {Float} audio position (sec) */
     load_percent: 0, /** {Float} audio file load percent (%) */
+    seekable: false, /** {Boolean} is loaded audio seekable */
     /**
      * Initialize the player
      * @param {String} swf_src path to audio player SWF file
@@ -153,10 +154,12 @@
      * ExternalInterface timeupdate callback. Fires as long as playhead position is updated (audio is being played).
      * @param {Float} position audio playback position (sec)
      * @param {Float} duration audio total duration (sec)
+     * @param {Boolean} seekable is audio seekable or not (download or streaming)
      */
-    eiTimeUpdate: function(position, duration){
+    eiTimeUpdate: function(position, duration, seekable){
       this.position = position;
       this.duration = duration;
+      this.seekable = seekable;
       this.trigger('timeupdate', position, duration);
     },
     /**
@@ -195,10 +198,20 @@
       this.trigger('ended');
     },
     /**
+     * Resets audio position and parameters. Invoked once audio is loaded.
+     */
+    reset: function(){
+      this.seekable = false;
+      this.duration = 0;
+      this.position = 0;
+      this.load_percent = 0;
+    },
+    /**
      * Load audio from url.
      * @param {String} url URL of audio to load
      */
     load: function(url){
+      this.reset();
       this.audio.load(url);
     },
     /**
@@ -249,6 +262,7 @@
     duration: 0, /** {Float} audio duration (sec) */
     position: 0, /** {Float} audio position (sec) */
     load_percent: 0, /** {Float} audio file load percent (%) */
+    seekable: false, /** {Boolean} is loaded audio seekable */
     /**
      * Initialize the player instance
      */
@@ -304,7 +318,10 @@
      * Resets player parameters and starts audio download progress timer.
      */
     onLoad: function(){
-      this.timer = setInterval(this.onProgress.bind(this), 250);
+      this.seekable = this.audio.seekable && this.audio.seekable.length > 0;
+      if(this.seekable){
+        this.timer = setInterval(this.onProgress.bind(this), 250);
+      }
       this.reset();
     },
     /**
@@ -338,6 +355,9 @@
       // This forces download progress to get an accurate reading.
       this.seek(0);
       this.pause();
+      this.seekable = false;
+      this.duration = 0;
+      this.position = 0;
       this.load_percent = 0;
     },
     /**
