@@ -75,10 +75,40 @@
 
   var util = {
     flash_embed_code: '<embed name="$1" id="$1" src="$2?playerInstance=' + ns + '.flash.instances[\'$1\']&datetime=$3" width="1" height="1" allowscriptaccess="always"></embed>',
-    use_flash: (function () {
+    can_play: function (mime_type) {
       var a = document.createElement('audio');
-      return !(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''));
-    }()),
+      var mime_str;
+      switch (mime_type) {
+      case 'mp3':
+        mime_str = 'audio/mpeg; codecs="mp3"';
+        break;
+      case 'ogg':
+        mime_str = 'audio/ogg; codecs="vorbis"';
+        break;
+      case 'aac':
+        mime_str = 'audio/aac;';
+        break;
+      case 'mp4':
+        mime_str = 'audio/mp4;';
+        break;
+      case 'webm':
+        mime_str = 'audio/webm;';
+        break;
+      case 'wav':
+        mime_str = 'audio/wav;';
+        break;
+      }
+      if (mime_str === undefined) {
+        throw new Error('Unspecified Audio Mime Type');
+      } else {
+        return !!a.canPlayType && a.canPlayType(mime_str) !== '';
+      }
+    },
+    /**
+     * Boolean flag whether to use flash player or not
+     * based on mp3 browser support.
+     */
+    use_flash: (this.can_play('mp3')),
     has_flash: (function () {
       var r = false;
       if (navigator.plugins && navigator.plugins.length && navigator.plugins['Shockwave Flash']) {
@@ -445,7 +475,14 @@
    */
   Audio5js.flash = {
     instances: { }, /** FlashAudioPlayer instance hash */
-    count: 0 /** FlashAudioPlayer instance count */
+    count: 0, /** FlashAudioPlayer instance count */
+    /**
+     * Check if browser can play a given audio mime type
+     * @param {String} mime_type mime type to check for (mp3 / mp4 / ogg / wav / webm)
+     */
+    can_play: function (mime_type) {
+      return util.can_play(mime_type);
+    }
   };
 
   Audio5js.prototype = {
