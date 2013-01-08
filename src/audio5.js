@@ -104,11 +104,6 @@
         return !!a.canPlayType && a.canPlayType(mime_str) !== '';
       }
     },
-    /**
-     * Boolean flag whether to use flash player or not
-     * based on mp3 browser support.
-     */
-    use_flash: (this.can_play('mp3')),
     has_flash: (function () {
       var r = false;
       if (navigator.plugins && navigator.plugins.length && navigator.plugins['Shockwave Flash']) {
@@ -143,6 +138,8 @@
       return document.getElementById(id);
     }
   };
+
+  util.use_flash = util.can_play('mp3');
 
   var Audio5js, FlashAudioPlayer, HTML5AudioPlayer;
 
@@ -448,7 +445,8 @@
    * @type {Object}
    */
   var settings = {
-    swf_path: 'audiojs.swf'
+    swf_path: 'audiojs.swf',
+    use_flash: util.use_flash
   };
 
   /**
@@ -475,14 +473,16 @@
    */
   Audio5js.flash = {
     instances: { }, /** FlashAudioPlayer instance hash */
-    count: 0, /** FlashAudioPlayer instance count */
-    /**
-     * Check if browser can play a given audio mime type
-     * @param {String} mime_type mime type to check for (mp3 / mp4 / ogg / wav / webm)
-     */
-    can_play: function (mime_type) {
-      return util.can_play(mime_type);
-    }
+    count: 0 /** FlashAudioPlayer instance count */
+  };
+
+  /**
+   * Check if browser can play a given audio mime type.
+   * @param {String} mime_type audio mime type to check.
+   * @return {Boolean} is audio mime type supported by browser or not
+   */
+  Audio5js.can_play = function (mime_type) {
+    return util.can_play(mime_type);
   };
 
   Audio5js.prototype = {
@@ -493,10 +493,11 @@
      */
     init: function (s) {
       this.settings = s;
+      console.log(s);
       try {
-        this.audio = util.use_flash ? new FlashAudioPlayer() : new HTML5AudioPlayer();
+        this.audio = this.settings.use_flash ? new FlashAudioPlayer() : new HTML5AudioPlayer();
         this.bindAudioEvents();
-        if (util.use_flash) {
+        if (this.settings.use_flash) {
           this.audio.init(s.swf_path);
         } else {
           this.audio.init();
