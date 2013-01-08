@@ -194,7 +194,9 @@
       this.position = position;
       this.duration = duration;
       this.seekable = seekable;
-      this.trigger('timeupdate', position, duration);
+      if (this.playing) {
+        this.trigger('timeupdate', position, (this.seekable ? duration : null));
+      }
     },
     /**
      * ExternalInterface download progress callback. Fires as long as audio file is downloaded by browser.
@@ -342,9 +344,9 @@
      * Audio timeupdate event handler. Triggered as long as playhead position is updated (audio is being played).
      */
     onTimeUpdate: function () {
-      if (this.audio.buffered !== null && this.audio.buffered.length) {
+      if (this.audio.buffered !== null && this.audio.buffered.length && this.playing) {
         this.position = this.audio.currentTime;
-        this.duration = this.audio.duration;
+        this.duration = this.audio.duration === Infinity ? null : this.duration;
         this.trigger('timeupdate', this.position, this.duration);
       }
     },
