@@ -13,7 +13,7 @@
       "use strict";
       var Audio5js = $win.Audio5js;
       var btn = document.getElementById('play');
-      var audio5 = new Audio5js({
+      $win.audio5 = new Audio5js({
         swf_path: './flash/audio5js.swf',
         use_flash: !Audio5js.can_play('mp3'),
         ready: function () {
@@ -22,6 +22,9 @@
           btn.addEventListener('click', this.playPause.bind(this), false);
         }
       });
+      $win.audio5.on('timeupdate', function (p, d) {
+        console.log(p, d);
+      }, $win.audio5);
     }(window));
   </script>
 </body>
