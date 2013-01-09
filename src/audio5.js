@@ -623,6 +623,27 @@
     onProgress: function (loaded) {
       this.load_percent = loaded;
       this.trigger('progress', loaded);
+    },
+    /**
+     * Get / Set audio volume
+     * @param {Float} v audio volume to set between 0 - 1.
+     * @return {Float} current audio volume
+     */
+    volume: function (v) {
+      if (v !== undefined && !isNaN(parseInt(v, 10))) {
+        this.audio.volume(v);
+        this.vol = v;
+      } else {
+        return this.vol;
+      }
+    },
+    /**
+     * Seek audio to position
+     * @param {Float} position audio position in seconds to seek to.
+     */
+    seek: function (position) {
+      this.audio.seek(position);
+      this.position = position;
     }
   };
 
