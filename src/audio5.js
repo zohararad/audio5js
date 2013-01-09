@@ -6,16 +6,33 @@
   var Audio = $win.Audio;
 
   /**
+   * Clones an object
+   * @param obj object to clone
+   * @return {Object} cloned object
+   */
+  function cloneObject(obj) {
+    var clone = {}, i;
+    for (i in obj) {
+      if (typeof (obj[i]) === "object") {
+        clone[i] = cloneObject(obj[i]);
+      } else {
+        clone[i] = obj[i];
+      }
+    }
+    return clone;
+  }
+
+  /**
    * Extend an object with a mixin
    * @param {Object} target target object to extend
    * @param {Object} mixin object to mix into target
    * @return {*} extended object
    */
   var extend = function (target, mixin) {
-    var name, method;
-    for (name in mixin) {
-      if (mixin.hasOwnProperty(name)) {
-        target[name] = mixin[name];
+    var name, method, m = cloneObject(mixin);
+    for (name in m) {
+      if (m.hasOwnProperty(name)) {
+        target[name] = m[name];
       }
     }
     return target;
@@ -31,7 +48,7 @@
     return extend(target.prototype, mixin);
   };
 
-  var pubsub = {
+  var Pubsub = {
     channels: {}, //hash of subscribed channels
     /**
      * Subscribe to event on a channel
@@ -66,9 +83,13 @@
     trigger: function (evt) {
       if (this.channels.hasOwnProperty(evt)) {
         var args = Array.prototype.slice.call(arguments, 1);
-        this.channels[evt].forEach(function (sub) {
-          sub.fn.apply(sub.ctx, args);
-        });
+        var i, l;
+        for (i = 0, l = this.channels[evt].length; i < l; i++) {
+          var sub = this.channels[evt][i];
+          if (typeof (sub.fn) === 'function') {
+            sub.fn.apply(sub.ctx, args);
+          }
+        }
       }
     }
   };
@@ -151,12 +172,12 @@
     if (util.use_flash && !util.has_flash) {
       throw new Error('Flash Plugin Missing');
     } else {
-      include(FlashAudioPlayer, pubsub);
+      include(FlashAudioPlayer, Pubsub);
     }
   };
 
   FlashAudioPlayer.prototype = {
-    vol: 0, /** {Float} audio volume */
+    vol: 1, /** {Float} audio volume */
     duration: 0, /** {Float} audio duration (sec) */
     position: 0, /** {Float} audio position (sec) */
     load_percent: 0, /** {Float} audio file load percent (%) */
@@ -281,8 +302,10 @@
      * @param {Float} position audio position in seconds to seek to.
      */
     seek: function (position) {
-      this.position = position;
-      this.audio.seekTo(position);
+      try {
+        this.audio.seekTo(position);
+        this.position = position;
+      } catch (e) {}
     }
   };
 
@@ -291,11 +314,11 @@
    * @constructor
    */
   HTML5AudioPlayer = function () {
-    include(HTML5AudioPlayer, pubsub);
+    include(HTML5AudioPlayer, Pubsub);
   };
 
   HTML5AudioPlayer.prototype = {
-    vol: 0, /** {Float} audio volume */
+    vol: 1, /** {Float} audio volume */
     duration: 0, /** {Float} audio duration (sec) */
     position: 0, /** {Float} audio position (sec) */
     load_percent: 0, /** {Float} audio file load percent (%) */
@@ -318,6 +341,7 @@
       this.audio.addEventListener('pause', this.onPause.bind(this));
       this.audio.addEventListener('ended', this.onEnded.bind(this));
       this.audio.addEventListener('canplay', this.onLoad.bind(this));
+      this.audio.addEventListener('error', this.onError.bind(this));
     },
     /**
      * Audio play event handler. Triggered when audio starts playing.
@@ -374,6 +398,13 @@
           this.clearLoadProgress();
         }
       }
+    },
+    /**
+     * Audio error event handler
+     * @param e error event
+     */
+    onError: function (e) {
+      this.trigger('error', e);
     },
     /**
      * Clears periodical audio download progress callback.
@@ -437,7 +468,7 @@
      */
     seek: function (position) {
       this.position = position;
-      this.audio.currentTime = position / 1000;
+      this.audio.currentTime = position;
       this.play();
     }
   };
@@ -457,7 +488,7 @@
    * @constructor
    */
   Audio5js = function (s) {
-    include(Audio5js, pubsub);
+    include(Audio5js, Pubsub);
     s = s || {};
     var k;
     for (k in settings) {
@@ -489,13 +520,17 @@
 
   Audio5js.prototype = {
     playing: false, /** {Boolean} player playback state  */
+    vol: 1, /** {Float} audio volume */
+    duration: 0, /** {Float} audio duration (sec) */
+    position: 0, /** {Float} audio position (sec) */
+    load_percent: 0, /** {Float} audio file load percent (%) */
+    seekable: false, /** {Boolean} is loaded audio seekable */
     /**
      * Initialize player instance.
      * @param {Object} s player settings object
      */
     init: function (s) {
       this.settings = s;
-      console.log(s);
       try {
         this.audio = this.settings.use_flash ? new FlashAudioPlayer() : new HTML5AudioPlayer();
         this.bindAudioEvents();
@@ -577,14 +612,17 @@
      * @param {Float} duration audio duration (sec)
      */
     onTimeUpdate: function (position, duration) {
-      console.log(position, duration);
+      this.position = position;
+      this.duration = duration;
+      this.trigger('timeupdate', position, duration);
     },
     /**
      * Audio download progress event handler
      * @param {Float} loaded audio download percent
      */
     onProgress: function (loaded) {
-      console.log(loaded);
+      this.load_percent = loaded;
+      this.trigger('progress', loaded);
     }
   };
 
