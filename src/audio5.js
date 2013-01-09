@@ -106,6 +106,9 @@
   };
 
   var util = {
+    /**
+     * Flash embed code string with cross-browser support.
+     */
     flash_embed_code: (function () {
       var prefix;
       var s = '<param name="movie" value="$2?playerInstance=' + ns + '.flash.instances[\'$1\']&datetime=$3"/>' +
@@ -119,6 +122,11 @@
       }
       return prefix + s;
     }()),
+    /**
+     * Check if browser supports audio mime type.
+     * @param {String} mime_type audio mime type to check
+     * @return {Boolean} whether browser supports passed audio mime type
+     */
     can_play: function (mime_type) {
       var a = document.createElement('audio');
       var mime_str;
@@ -183,6 +191,23 @@
       d.innerHTML = flashSource;
       document.body.appendChild(d);
       return document.getElementById(id);
+    },
+    /**
+     * Formats seconds into a time string hh:mm:ss.
+     * @param {Number} seconds seconds to format as string
+     * @return {String} formatted time string
+     */
+    formatTime: function (seconds) {
+      var hours = parseInt(seconds / 3600, 10) % 24;
+      var minutes = parseInt(seconds / 60, 10) % 60;
+      var secs = parseInt(seconds % 60, 10);
+      var result, fragment = (minutes < 10 ? "0" + minutes : minutes) + ":" + (secs  < 10 ? "0" + secs : secs);
+      if (hours > 0) {
+        result = (hours < 10 ? "0" + hours : hours) + ":" + fragment;
+      } else {
+        result = fragment;
+      }
+      return result;
     }
   };
 
@@ -516,9 +541,13 @@
      */
     use_flash: util.use_flash,
     /**
-     * flag indicating whether to throw errors to the page or trigger an error event
+     * {Boolean} flag indicating whether to throw errors to the page or trigger an error event
      */
-    throw_errors: true
+    throw_errors: true,
+    /**
+     * {Boolean} flag indicating whether to format player duration and position to hh:mm:ss or pass as raw seconds
+     */
+    format_time: true
   };
 
   /**
@@ -659,9 +688,11 @@
      * @param {Float} duration audio duration (sec)
      */
     onTimeUpdate: function (position, duration) {
-      this.position = position;
-      this.duration = duration;
-      this.trigger('timeupdate', position, duration);
+      this.position = this.settings.format_time ? util.formatTime(position) : position;
+      if (this.duration !== duration) {
+        this.duration = this.settings.format_time && duration !== null ? util.formatTime(duration) : duration;
+      }
+      this.trigger('timeupdate', this.position, this.duration);
     },
     /**
      * Audio download progress event handler
