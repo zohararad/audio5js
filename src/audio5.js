@@ -6,6 +6,17 @@
   var Audio = $win.Audio;
 
   /**
+   * AudioError Class
+   * @param {String} message error message
+   * @constructor
+   */
+  function AudioError(message) {
+    this.message = message;
+  }
+
+  AudioError.prototype = new Error();
+
+  /**
    * Clones an object
    * @param obj object to clone
    * @return {Object} cloned object
@@ -125,6 +136,9 @@
         return !!a.canPlayType && a.canPlayType(mime_str) !== '';
       }
     },
+    /**
+     * Boolean flag indicating whether the browser has Flash installed or not
+     */
     has_flash: (function () {
       var r = false;
       if (navigator.plugins && navigator.plugins.length && navigator.plugins['Shockwave Flash']) {
@@ -165,6 +179,19 @@
   var Audio5js, FlashAudioPlayer, HTML5AudioPlayer;
 
   /**
+   * Common audio attributes object. Mixed into audio players.
+   * @type {Object}
+   */
+  var AudioAttributes = {
+    playing: false, /** {Boolean} player playback state  */
+    vol: 1, /** {Float} audio volume */
+    duration: 0, /** {Float} audio duration (sec) */
+    position: 0, /** {Float} audio position (sec) */
+    load_percent: 0, /** {Float} audio file load percent (%) */
+    seekable: false /** {Boolean} is loaded audio seekable */
+  };
+
+  /**
    * Flash MP3 Audio Player Class
    * @constructor
    */
@@ -173,15 +200,11 @@
       throw new Error('Flash Plugin Missing');
     } else {
       include(FlashAudioPlayer, Pubsub);
+      include(FlashAudioPlayer, AudioAttributes);
     }
   };
 
   FlashAudioPlayer.prototype = {
-    vol: 1, /** {Float} audio volume */
-    duration: 0, /** {Float} audio duration (sec) */
-    position: 0, /** {Float} audio position (sec) */
-    load_percent: 0, /** {Float} audio file load percent (%) */
-    seekable: false, /** {Boolean} is loaded audio seekable */
     /**
      * Initialize the player
      * @param {String} swf_src path to audio player SWF file
@@ -229,9 +252,10 @@
     },
     /**
      * ExternalInterface audio load error callback.
+     * @param {String} msg error message
      */
-    eiLoadError: function () {
-      this.trigger('error');
+    eiLoadError: function (msg) {
+      this.trigger('error', msg);
     },
     /**
      * ExternalInterface audio play callback. Fires when audio starts playing.
@@ -315,14 +339,10 @@
    */
   HTML5AudioPlayer = function () {
     include(HTML5AudioPlayer, Pubsub);
+    include(HTML5AudioPlayer, AudioAttributes);
   };
 
   HTML5AudioPlayer.prototype = {
-    vol: 1, /** {Float} audio volume */
-    duration: 0, /** {Float} audio duration (sec) */
-    position: 0, /** {Float} audio position (sec) */
-    load_percent: 0, /** {Float} audio file load percent (%) */
-    seekable: false, /** {Boolean} is loaded audio seekable */
     /**
      * Initialize the player instance
      */
@@ -478,8 +498,18 @@
    * @type {Object}
    */
   var settings = {
+    /**
+     * {String} path to Flash audio player SWF file
+     */
     swf_path: 'audiojs.swf',
-    use_flash: util.use_flash
+    /**
+     * {Boolean} flag indicating whether to use a Flash or an HTML5 audio player
+     */
+    use_flash: util.use_flash,
+    /**
+     * flag indicating whether to throw errors to the page or trigger an error event
+     */
+    throw_errors: true
   };
 
   /**
@@ -489,6 +519,7 @@
    */
   Audio5js = function (s) {
     include(Audio5js, Pubsub);
+    include(Audio5js, AudioAttributes);
     s = s || {};
     var k;
     for (k in settings) {
@@ -519,28 +550,18 @@
   };
 
   Audio5js.prototype = {
-    playing: false, /** {Boolean} player playback state  */
-    vol: 1, /** {Float} audio volume */
-    duration: 0, /** {Float} audio duration (sec) */
-    position: 0, /** {Float} audio position (sec) */
-    load_percent: 0, /** {Float} audio file load percent (%) */
-    seekable: false, /** {Boolean} is loaded audio seekable */
     /**
      * Initialize player instance.
      * @param {Object} s player settings object
      */
     init: function (s) {
       this.settings = s;
-      try {
-        this.audio = this.settings.use_flash ? new FlashAudioPlayer() : new HTML5AudioPlayer();
-        this.bindAudioEvents();
-        if (this.settings.use_flash) {
-          this.audio.init(s.swf_path);
-        } else {
-          this.audio.init();
-        }
-      } catch (e) {
-        console.log(e);
+      this.audio = this.settings.use_flash ? new FlashAudioPlayer() : new HTML5AudioPlayer();
+      this.bindAudioEvents();
+      if (this.settings.use_flash) {
+        this.audio.init(s.swf_path);
+      } else {
+        this.audio.init();
       }
     },
     /**
@@ -553,6 +574,7 @@
       this.audio.on('ended', this.onPause, this);
       this.audio.on('timeupdate', this.onTimeUpdate, this);
       this.audio.on('progress', this.onProgress, this);
+      this.audio.on('error', this.onError, this);
     },
     /**
      * Load audio from URL
@@ -560,6 +582,7 @@
      */
     load: function (url) {
       this.audio.load(url);
+      this.trigger('load');
     },
     /**
      * Play audio
@@ -593,18 +616,33 @@
      */
     onPlay: function () {
       this.playing = true;
+      this.trigger('play');
     },
     /**
      * Audio pause event handler
      */
     onPause: function () {
       this.playing = false;
+      this.trigger('pause');
     },
     /**
      * Playback end event handler
      */
     onEnded: function () {
       this.playing = false;
+      this.trigger('ended');
+    },
+    /**
+     * Audio error event handler
+     * @param {String} msg error event message
+     */
+    onError: function (msg) {
+      var error = new AudioError('Audio Error. Failed to Load Audio');
+      if (this.settings.throw_errors) {
+        throw error;
+      } else {
+        this.trigger('error', error);
+      }
     },
     /**
      * Playback time update event handler
