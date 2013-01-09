@@ -19,7 +19,14 @@
         ready: function () {
           this.load('http://212.29.254.129:7075/;stream.mp3?ns=' + new Date().getTime());
           //this.load('http://s3.amazonaws.com/audiojs/02-juicy-r.mp3');
-          btn.addEventListener('click', this.playPause.bind(this), false);
+          if (typeof (btn.addEventListener) === 'function') {
+            btn.addEventListener('click', this.playPause.bind(this), false);
+          } else {
+            var that = this;
+            btn.attachEvent('onclick', function () {
+              that.playPause();
+            });
+          }
         }
       });
       $win.audio5.on('timeupdate', function (p, d) {
