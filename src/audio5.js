@@ -139,7 +139,7 @@
         mime_str = 'audio/webm;';
         break;
       case 'wav':
-        mime_str = 'audio/wav;';
+        mime_str = 'audio/wave;';
         break;
       }
       if (mime_str === undefined) {
@@ -294,7 +294,6 @@
      * Resets audio position and parameters. Invoked once audio is loaded.
      */
     reset: function () {
-      this.seek(0);
       this.seekable = false;
       this.duration = 0;
       this.position = 0;
@@ -360,7 +359,9 @@
      */
     init: function () {
       this.audio = new Audio();
+      this.audio.autoplay = false;
       this.audio.preload = 'auto';
+      this.audio.autobuffer = true;
       this.bindEvents();
       this.trigger('ready');
     },
@@ -402,7 +403,7 @@
     onTimeUpdate: function () {
       if (this.audio.buffered !== null && this.audio.buffered.length && this.playing) {
         this.position = this.audio.currentTime;
-        this.duration = this.audio.duration === Infinity ? null : this.duration;
+        this.duration = this.audio.duration === Infinity ? null : this.audio.duration;
         this.trigger('timeupdate', this.position, this.duration);
       }
     },
@@ -415,7 +416,6 @@
       if (this.seekable) {
         this.timer = setInterval(this.onProgress.bind(this), 250);
       }
-      this.reset();
     },
     /**
      * Audio download progress timer callback. Check audio's download percentage.
@@ -448,13 +448,10 @@
       }
     },
     /**
-     * Resets audio position and parameters. Invoked once audio can be played resets playback position to zero.
+     * Resets audio position and parameters.
      */
     reset: function () {
-      // When track is ready to play we seek to start of track and pause.
-      // This forces download progress to get an accurate reading.
-      this.seek(0);
-      this.pause();
+      this.clearLoadProgress();
       this.seekable = false;
       this.duration = 0;
       this.position = 0;
@@ -465,7 +462,7 @@
      * @param {String} url URL of audio to load
      */
     load: function (url) {
-      this.clearLoadProgress();
+      this.reset();
       this.audio.setAttribute('src', url);
       this.audio.load();
     },
