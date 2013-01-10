@@ -95,6 +95,7 @@ Audio5js exposes the following API:
 * **duration** - audio duration in seconds.
 * **position** - audio playhead position in seconds.
 * **load_percent** - audio file download percentage (ranges 0 - 100).
+* **seekable** - audio is seekable (download) or not (streaming).
 
 ### Class Methods
 
