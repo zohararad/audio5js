@@ -208,3 +208,43 @@ var audioReady = function () {
   }, this);
 }
 ```
+
+## Browser Support
+
+Audio5js doesn't try to please everyone. Having said that, it has been successfully tested on:
+
+* IE8, IE9
+* Chrome
+* Firefox
+* Safari
+* Opera
+
+## TODO
+
+* Test on mobile browsers.
+* Add `canPlay` event indicating audio can be played after loading.
+
+## Contributing
+
+Please feel free to fork, fix and send me pull requests. Alternatively, open tickets for bugs and feature requests.
+
+## Credits
+
+Audio5js relies heavily on the wonderful [audiojs library](http://kolber.github.com/audiojs/). The AS3 code for the fallback MP3
+player is taken almost as-is from audiojs, with some minor modifications for more comprehensive event handling.
+
+## License
+
+Audio5js is released under the MIT License.
+
+Copyright (c) 2013 Zohar Arad <zohar@zohararad.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## Disclaimer
+
+No fluffy pinguins were harmed during the making of Audio5js.
