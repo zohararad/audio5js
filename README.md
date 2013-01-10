@@ -209,6 +209,40 @@ var audioReady = function () {
 }
 ```
 
+## Fallbacks and multiple audio sources
+
+Browser-based audio isn't perfect, and it's more than likely that you'll need to serve the same audio in two formats, to support
+a wider crowd. Instead of complicating the internals of Audio5js to support selective, coded-based instantiation, Audio5js treats you as a grown-up,
+and leaves some of the "hard" work to you.
+
+Here's an example of initializing Audio5js with multiple audio sources, based on browser support:
+
+```javascript
+
+  var audio5js, audio_url;
+  var settings = {
+    swf_path: '/swf/audio5js.swf',
+    ready: function (){
+      this.load(audio_url);
+      this.play();
+    }
+  };
+
+  if (Audio5js.can_play('mp4')) { //for browsers that support mp4
+    audio_url = '/audio/song.mp4';
+    settings.use_flash = false;
+  } else if (Audio5js.can_play('ogg')) { //for browsers that support ogg
+    audio_url = '/audio/song.ogg';
+    settings.use_flash = false;
+  } else { //fallback to mp3
+    audio_url = '/audio/song.mp3';
+    settings.use_flash = !Audio5js.can_play('mp3');
+  }
+
+  audio5js = new Audio5js(settings);
+
+```
+
 ## Browser Support
 
 Audio5js doesn't try to please everyone. Having said that, it has been successfully tested on:
