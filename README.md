@@ -1,4 +1,4 @@
-# Audio5js - HTML5 Audio Javascript Library with Flash Fallback
+# Audio5js - The HTML5 Audio Compatibility Layer
 
 Audio5js a library-agnostic, cross-browser Javascript API for HTML5 Audio, with
 a Flash fallback for either older browsers or modern browsers without MP3 playback support.
@@ -40,6 +40,7 @@ Now, you can include the Javascript in your HTML, and instantiate the Audio play
   }
   initAudio();
 </script>
+```
 
 ## Configuration
 
@@ -53,7 +54,7 @@ The Audio5js object accepts a configuration object with the following settings:
 
 Here's an example configuartion using all the settings options above:
 
-```
+```html
 <script>
 
   var initAudio = function () {
