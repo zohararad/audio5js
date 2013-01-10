@@ -100,6 +100,13 @@ Audio5js exposes the following API:
 
 * **can_play** - Utility method to check whether the browser supports a certain audio mime-types.
 
+`Audio5js.can_play` class method supports the following mime-type queries:
+
+* **mp3** - check for `audio/mpeg; codecs="mp3"`. Example - `Audio5js.can_play('mp3')`
+* **ogg** - check for `audio/ogg; codecs="vorbis"`. Example - `Audio5js.can_play('ogg')`
+* **mp4** - check for `audio/mp4; codecs="mp4a.40.5"`. Example - `Audio5js.can_play('mp4')`
+* **wav** - check for `audio/wav; codecs="1"`. Example - `Audio5js.can_play('wav')`
+
 ### API Example
 
 ```html
@@ -145,4 +152,59 @@ Audio5js exposes the following API:
 
   initAudio();
 </script>
+```
+
+## Events
+
+Like HTML5's Audio, Audio5js exposes events that can be used to capture the state and properties of the audio playback cycle:
+
+* **play** - triggered when the audio begins playing. Analogue to HTML5 Audio `play` event.
+* **pause** - triggered when the audio is paused. Analogue to HTML5 Audio `pause` event.
+* **ended** - triggered when the audio playback has ended. Analogue to HTML5 Audio `ended` event.
+* **error** - triggered when the audio load error occurred. Analogue to HTML5 Audio `error` event.
+* **timeupdate** - triggered when the audio playhead position changes (during playback). Analogue to HTML5 Audio `timeupdate` event.
+* **progress** - triggered while audio file is being downloaded by the browser. Analogue to HTML5 Audio `progress` event.
+
+### Using Events
+
+To subscribe to an event triggered by Audio5js, you can use the `on` method. Similarly, to unsubscribe from an event, you can use the `off` method.
+
+The `on` method accepts the following arguments:
+
+* **event** - name of event to subscribe to
+* **callback** - callback function to execute when the event is triggered
+* **context** - execution context of callback function (reference to `this` inside the callback)
+
+The `off` method accepts the following arguments:
+
+* **event** - name of event to unsubscribe from
+* **callback** - the callback function passed during the event subscription
+
+```javascript
+
+var audio5js = new Audio5js({
+  ready: audioReady
+});
+
+var audioReady = function () {
+  //this points to the Audio5js instance
+  this.on('play', function () { console.log('play'); }, this);
+  this.on('pause', function () { console.log('pause'); }, this);
+  this.on('ended', function () { console.log('ended'); }, this);
+
+  // timeupdate event passes audio duration and position to callback
+  this.on('timeupdate', function (duration, position) {
+    console.log(duration, position);
+  }, this);
+
+  // progress event passes load_percent to callback
+  this.on('progress', function (load_percent) {
+    console.log(load_percent);
+  }, this);
+
+  //error event passes error object to callback
+  this.on('error', function (error) {
+    console.log(error.message);
+  }, this);
+}
 ```
