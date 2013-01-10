@@ -75,3 +75,74 @@ Here's an example configuartion using all the settings options above:
   initAudio();
 </script>
 ```
+
+## API
+
+Audio5js exposes the following API:
+
+### Instance Methods
+
+* **load** - load an audio file from URL
+* **play** - play loaded audio
+* **pause** - pause loaded audio
+* **playPause** - toggle play/pause playback state
+* **volume** - get / set volume (volume range is 0-1)
+* **seek** - move playhead position to a given time in seconds
+
+### Instance Attributes
+
+* **playing** - boolean flag indicating whether audio is playing (true) or paused (false).
+* **duration** - audio duration in seconds.
+* **position** - audio playhead position in seconds.
+* **load_percent** - audio file download percentage (ranges 0 - 100).
+
+### Class Methods
+
+* **can_play** - Utility method to check whether the browser supports a certain audio mime-types.
+
+### API Example
+
+```html
+<button id="play-pause" type="button">Play / Pause</button>
+<button id="move-to-start" type="button">Move to Start</button>
+<script>
+
+  var audioReady = function () {
+    this.load('/audio/song.mp3');
+    var play_pause = document.getElementById('play-pause');
+    play_pause.addEventListener('click', playPause.bind(this));
+    var move_to_start = document.getElementById('move-to-start');
+    move_to_start.addEventListener('click', moveToStart.bind(this));
+  }
+
+  var playPause = function () {
+    if (this.playing) {
+      this.pause();
+      this.volume(0);
+      console.log(this.position, this.duration, this.load_percent, this.volume());
+    } else {
+      this.play();
+      this.volume(1);
+    }
+    // or simply call this.playPause();
+  }
+
+  var moveToStart = function () {
+    this.seek(0);
+  }
+
+  var initAudio = function () {
+    var use_flash = !Audio5js.can_play('mp3');
+    var audio5js = new Audio5js({
+      swf_path: '/statics/swf/audio5js.swf',
+      use_flash: use_flash,
+      throw_errors: true,
+      format_time: true,
+      ready: audioReady
+    });
+
+  }
+
+  initAudio();
+</script>
+```
