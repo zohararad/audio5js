@@ -1,4 +1,14 @@
-(function (ns, $win) {
+(function (ns, $win, factory) {
+  if (typeof module != 'undefined' && module.exports) {
+    module.exports = factory(ns); // CommonJS
+  } else if (typeof define == 'function'  && define.amd) {
+    define(function () {
+      return factory(ns, $win);
+    }); // AMD
+  } else {
+    $win[ns] = factory(ns); // <script>
+  }
+}('Audio5js', this, function (ns, $win) {
 
   "use strict";
 
@@ -725,6 +735,6 @@
     }
   };
 
-  $win[ns] = Audio5js;
+  return Audio5js;
 
-}('Audio5js', this));
+}));
