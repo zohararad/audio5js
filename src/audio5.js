@@ -1,10 +1,10 @@
 (function (ns, $win, factory) {
   "use strict";
 
-  var module = $win.module || {};
-  var define = $win.define || {};
+  var module = $win.module;
+  var define = $win.define;
 
-  if (module !== 'undefined' && module.exports) { // CommonJS
+  if (module !== undefined && module.exports) { // CommonJS
     module.exports = factory(ns, $win);
   } else if (typeof (define) === 'function' && define.amd) { // AMD
     define(function () {
