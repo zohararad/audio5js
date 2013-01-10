@@ -535,7 +535,7 @@
     /**
      * {String} path to Flash audio player SWF file
      */
-    swf_path: 'audiojs.swf',
+    swf_path: '/swf/audiojs.swf',
     /**
      * {Boolean} flag indicating whether to use a Flash or an HTML5 audio player
      */
