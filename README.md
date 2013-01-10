@@ -52,7 +52,7 @@ The Audio5js object accepts a configuration object with the following settings:
 * **format_time** - A boolean flag indicating whether playback position and duration should be formatted to a time-string (hh:mm:ss), or remain as unformatted numbers (measured in seconds). Defaults to `true`.
 * **ready** - An optional function that will be called when the player is ready to load and play audio.
 
-Here's an example configuartion using all the settings options above:
+Here's an example configuration using all the settings options above:
 
 ```html
 <script>
