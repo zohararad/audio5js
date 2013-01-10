@@ -137,17 +137,11 @@
       case 'ogg':
         mime_str = 'audio/ogg; codecs="vorbis"';
         break;
-      case 'aac':
-        mime_str = 'audio/aac;';
-        break;
       case 'mp4':
-        mime_str = 'audio/mp4;';
-        break;
-      case 'webm':
-        mime_str = 'audio/webm;';
+        mime_str = 'audio/mp4; codecs="mp4a.40.5"';
         break;
       case 'wav':
-        mime_str = 'audio/wave;';
+        mime_str = 'audio/wav; codecs="1"';
         break;
       }
       if (mime_str === undefined) {
@@ -316,6 +310,12 @@
       this.trigger('ended');
     },
     /**
+     * ExternalInterface audio ended callback. Fires when audio playback ended.
+     */
+    eiCanPlay: function () {
+      this.trigger('canplay');
+    },
+    /**
      * Resets audio position and parameters. Invoked once audio is loaded.
      */
     reset: function () {
@@ -441,6 +441,7 @@
       if (this.seekable) {
         this.timer = setInterval(this.onProgress.bind(this), 250);
       }
+      this.trigger('canplay');
     },
     /**
      * Audio download progress timer callback. Check audio's download percentage.
@@ -610,6 +611,7 @@
       this.audio.on('play', this.onPlay, this);
       this.audio.on('pause', this.onPause, this);
       this.audio.on('ended', this.onPause, this);
+      this.audio.on('canplay', this.onCanPlay, this);
       this.audio.on('timeupdate', this.onTimeUpdate, this);
       this.audio.on('progress', this.onProgress, this);
       this.audio.on('error', this.onError, this);
@@ -639,6 +641,27 @@
      */
     playPause: function () {
       this[this.playing ? 'pause' : 'play']();
+    },
+    /**
+     * Get / Set audio volume
+     * @param {Float} v audio volume to set between 0 - 1.
+     * @return {Float} current audio volume
+     */
+    volume: function (v) {
+      if (v !== undefined && !isNaN(parseInt(v, 10))) {
+        this.audio.volume(v);
+        this.vol = v;
+      } else {
+        return this.vol;
+      }
+    },
+    /**
+     * Seek audio to position
+     * @param {Float} position audio position in seconds to seek to.
+     */
+    seek: function (position) {
+      this.audio.seek(position);
+      this.position = position;
     },
     /**
      * Callback for audio ready event. Indicates audio is ready for playback.
@@ -683,6 +706,12 @@
       }
     },
     /**
+     * Audio canplay event handler. Triggered when enough audio has been loaded to by played.
+     */
+    onCanPlay: function () {
+      this.trigger('canplay');
+    },
+    /**
      * Playback time update event handler
      * @param {Float} position play head position (sec)
      * @param {Float} duration audio duration (sec)
@@ -701,27 +730,6 @@
     onProgress: function (loaded) {
       this.load_percent = loaded;
       this.trigger('progress', loaded);
-    },
-    /**
-     * Get / Set audio volume
-     * @param {Float} v audio volume to set between 0 - 1.
-     * @return {Float} current audio volume
-     */
-    volume: function (v) {
-      if (v !== undefined && !isNaN(parseInt(v, 10))) {
-        this.audio.volume(v);
-        this.vol = v;
-      } else {
-        return this.vol;
-      }
-    },
-    /**
-     * Seek audio to position
-     * @param {Float} position audio position in seconds to seek to.
-     */
-    seek: function (position) {
-      this.audio.seek(position);
-      this.position = position;
     }
   };
 
