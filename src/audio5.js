@@ -1,8 +1,8 @@
 (function (ns, $win, factory) {
   "use strict";
 
-  var module = $win.module;
-  var define = $win.define;
+  var module = $win.module || {};
+  var define = $win.define || {};
 
   if (module !== 'undefined' && module.exports) { // CommonJS
     module.exports = factory(ns, $win);
