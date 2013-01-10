@@ -3,11 +3,15 @@
 Audio5js a library-agnostic, cross-browser Javascript API for HTML5 Audio, with
 a Flash fallback for either older browsers or modern browsers without MP3 playback support.
 
-Unlike existing libraries, Audio5js doesn't attempt to provided a full-fledged audio player, UI and all, nor does it
-assume any existing DOM manipulation libraries like jQuery or Zepto.
+There are many great audio playback libraries out there, each trying to solve a different problem.
+Audio5js tries to address or avoid the following:
 
-Instead, Audio5js simply provides a unified API to control audio in the browser using Javascript. Think of it as
-an HTML5 Audio playback compatibility layer, where the visual implementation is left to the developer.
+* Library-agnostic - Audio5js doesn't rely on any external library like jQuery or Dojo, leaving the DOM manipulation part to you.
+* Multi-codec - Audio5js assumes you'll want to support any commonly available audio codec, not just MP3.
+* Light-weight - Audio5js doesn't try and implement anything beyond the bare-bones HTML5 Audio playback API, keeping it light and nimble.
+* Javascript-only - Audio5js doesn't depend on existing `<audio>` tags in your DOM, but instead lets you programmatically control every aspect of the audio playback cycle from Javascript.
+* No UI - Each player is different, and therefore the visual and functional implementation is left to you. Audio5js aims to facilitate the authoring of your audio player UI by exposing a unified API, and nothing more.
+* No fluffy penguin abuse - Audio5js will never abuse or hurt fluffy penguins wherever they might be.
 
 ## Getting Started
 
@@ -282,4 +286,4 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## Disclaimer
 
-No fluffy pinguins were harmed during the making of Audio5js.
+No fluffy penguins were harmed during the making of Audio5js.
