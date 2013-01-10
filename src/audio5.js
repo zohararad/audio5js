@@ -1,13 +1,19 @@
 (function (ns, $win, factory) {
-  if (typeof module != 'undefined' && module.exports) {
-    module.exports = factory(ns); // CommonJS
-  } else if (typeof define == 'function'  && define.amd) {
+  "use strict";
+
+  var module = $win.module;
+  var define = $win.define;
+
+  if (module !== 'undefined' && module.exports) { // CommonJS
+    module.exports = factory(ns, $win);
+  } else if (typeof (define) === 'function' && define.amd) { // AMD
     define(function () {
       return factory(ns, $win);
-    }); // AMD
-  } else {
-    $win[ns] = factory(ns); // <script>
+    });
+  } else { // <script>
+    $win[ns] = factory(ns, $win);
   }
+
 }('Audio5js', this, function (ns, $win) {
 
   "use strict";
