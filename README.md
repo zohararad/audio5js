@@ -11,7 +11,7 @@ an HTML5 Audio playback compatibility layer, where the visual implementation is 
 
 ## Getting Started
 
-Audio5js requires two components to work - the Javascript library found in `src/audio5js.js` and the SWF fallback, found in `flash/audio5js.swf`.
+Audio5js requires two components to work - the Javascript library found in `src/audio5.js` and the SWF fallback, found in `flash/audio5js.swf`.
 
 Simply download the source code, extract, and place both files somewhere in your project. For the purpose of demonstration,
 let's assume your project directory structure looks like this:
@@ -20,7 +20,7 @@ let's assume your project directory structure looks like this:
 /
 -/public
 --/js
---- audio5js.js
+--- audio5.js
 --/swf
 --- audio5js.swf
 ```
@@ -28,7 +28,7 @@ let's assume your project directory structure looks like this:
 Now, you can include the Javascript in your HTML, and instantiate the Audio player:
 
 ```html
-<script src="/js/audio5js.js"></script>
+<script src="/js/audio5.js"></script>
 <script>
   function initAudio () {
     var audio5js = new Audio5js({
