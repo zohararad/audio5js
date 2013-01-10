@@ -6,12 +6,12 @@ a Flash fallback for either older browsers or modern browsers without MP3 playba
 There are many great audio playback libraries out there, each trying to solve a different problem.
 Audio5js tries to address or avoid the following:
 
-* Library-agnostic - Audio5js doesn't rely on any external library like jQuery or Dojo, leaving the DOM manipulation part to you.
-* Multi-codec - Audio5js assumes you'll want to support any commonly available audio codec, not just MP3.
-* Light-weight - Audio5js doesn't try and implement anything beyond the bare-bones HTML5 Audio playback API, keeping it light and nimble.
-* Javascript-only - Audio5js doesn't depend on existing `<audio>` tags in your DOM, but instead lets you programmatically control every aspect of the audio playback cycle from Javascript.
-* No UI - Each player is different, and therefore the visual and functional implementation is left to you. Audio5js aims to facilitate the authoring of your audio player UI by exposing a unified API, and nothing more.
-* No fluffy penguin abuse - Audio5js will never abuse or hurt fluffy penguins wherever they might be.
+* **Library-agnostic** - Audio5js doesn't rely on any external library like jQuery or Dojo, leaving the DOM manipulation part to you.
+* **Multi-codec** - Audio5js assumes you'll want to support any commonly available audio codec, not just MP3.
+* **Lightweight** - Audio5js doesn't try and implement anything beyond the bare-bones HTML5 Audio playback API, keeping it light and nimble.
+* **Javascript-only** - Audio5js doesn't depend on existing `<audio>` tags in your DOM, but instead lets you programmatically control every aspect of the audio playback cycle from Javascript.
+* **No UI** - Each player is different, and therefore the visual and functional implementation is left to you. Audio5js aims to facilitate the authoring of your audio player UI by exposing a unified API, and nothing more.
+* **No fluffy penguin abuse** - Audio5js will never abuse or hurt fluffy penguins wherever they might be.
 
 ## Getting Started
 
@@ -248,20 +248,53 @@ Here's an example of initializing Audio5js with multiple audio sources, based on
 
 ```
 
+## Safari Mobile
+
+Safari mobile won't let you play audio without explicit user interaction. In other words, the initial click on your "play" button
+needs to load the audio. Here's an example of how to load and play audio on Safari Mobile with Audio5js:
+
+```html
+<button id="play-pause" type="button">Play / Pause</button>
+<script>
+  var loaded = false;
+
+  var playPause = function () {
+    if (!loaded) {
+      this.on('canplay', function () {
+        loaded = true;
+        this.play();
+      }, this);
+      this.load('/song.mp3');
+    } else {
+      this.playPause();
+    }
+  }
+
+  var audio5js = new Audio5js({
+    swf_path: './flash/audio5js.swf',
+    use_flash: !Audio5js.can_play('mp3'),
+    ready: function () {
+      var btn = document.getElementById('play-pause');
+      btn.addEventListener('click', playPause.bind(this), false);
+    }
+  });
+</script>
+```
+
 ## Browser Support
 
 Audio5js doesn't try to please everyone. Having said that, it has been successfully tested on:
 
 * IE8, IE9
-* Chrome
-* Firefox
-* Safari
-* Opera
+* Chrome 23 (Mac)
+* Firefox 17 (Mac)
+* Safari 6
+* Opera 12 (Mac)
+* Safari Mobile (iOS 6.0)
 
 ## TODO
 
-* Test on mobile browsers.
-* Add `canPlay` event indicating audio can be played after loading.
+* Test on mobile browsers (Android).
 
 ## Contributing
 
