@@ -662,7 +662,7 @@
       this.audio.on('ready', this.onReady, this);
       this.audio.on('play', this.onPlay, this);
       this.audio.on('pause', this.onPause, this);
-      this.audio.on('ended', this.onPause, this);
+      this.audio.on('ended', this.onEnded, this);
       this.audio.on('canplay', this.onCanPlay, this);
       this.audio.on('timeupdate', this.onTimeUpdate, this);
       this.audio.on('progress', this.onProgress, this);
