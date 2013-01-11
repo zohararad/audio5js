@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+
+  <title>Audio5js - The HTML Audio Compatibility Layer</title>
+  <link href='http://fonts.googleapis.com/css?family=PT+Serif:400,700|Ubuntu+Condensed' rel='stylesheet' type='text/css' />
+  <link rel="stylesheet" href="css/foundation.min.css" />
+  <link rel="stylesheet" href="css/app.css" />
+  <link rel="stylesheet" href="css/github.css" />
+</head>
+<body>
+  <header class="row">
+    <div class="twelve columns">
+      <h1>Audio5js</h1>
+      <h3 class="subheader">The HTML Audio Compatibility Layer</h3>
+    </div>
+    <section class="twelve columns">
+      <div class="panel">
+        <p>
+          <strong>Audio5js</strong> is a Javascript library that provides a seamless compatibility layer to the HTML5 Audio playback API, with
+          multiple codec support and a Flash-based MP3 playback fallback for older or unsupported browsers.
+        </p>
+        <p>
+          The motivation for creating <strong>Audio5js</strong> is to provide a light-weight, library-agnostic, Javascript-only interface for
+          audio playback in the browser.
+        </p>
+      </div>
+    </section>
+  </header>
+  <section>
+    <div class="row">
+      <header class="twelve columns">
+        <h1 class="subheader">Getting Started</h1>
+      </header>
+    </div>
+    <div class="row">
+      <div class="six columns">
+        <p>
+          <strong>Audio5js</strong> requires two components to properly work: the Javascript library itself and the MP3 Flash fallback SWF file.
+        </p>
+        <p>
+          Simply download the source code, extract, and place both files somewhere in your project. For the purpose of demonstration,
+          let's assume your project directory structure looks like this:
+        </p>
+      </div>
+      <div class="six columns">
+        <pre>
+          <code>
+  /
+  -/public
+  --/js
+  --- audio5.js
+  --/swf
+  --- audio5js.swf
+          </code>
+        </pre>
+      </div>
+    </div>
+    <div class="row">
+      <div class="six columns">
+        <p>Now, you can include the Javascript in your HTML, and instantiate the Audio player.</p>
+        <p>By default, <strong>Audio5js</strong> will look for the MP3 fallback SWF under <em>/swf/audio5js.swf</em></p>
+      </div>
+      <div class="six columns">
+        <pre>
+          <code data-language="javascript">
+  &lt;script src="/js/audio5.js"&gt;&lt;/script&gt;
+  &lt;script&gt;
+    function initAudio () {
+      var audio5js = new Audio5js({
+        ready: function () {
+          this.load('/someaudio.mp3');
+          this.play();
+        }
+      });
+    }
+    initAudio();
+  &lt;/script&gt;
+          </code>
+        </pre>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <header class="twelve columns">
+        <h1 class="subheader">Audio Codec Support</h1>
+      </header>
+    </div>
+    <div class="row">
+      <div class="twelve columns">
+        <p>Audio codec browser-support is a mess. It's more than likely that you'd like to play the same audio in different formats to support a wider crowd.</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="six columns">
+        <p>
+          Luckily, <strong>Audio5js</strong> can cleverly determine which audio codec is supported by the browser, and
+          initialize itself with the most suitable playback engine, while letting you know which engine (HTML or Flash) it's
+          using and which codec is supported.
+        </p>
+        <p>
+          To enable multiple codec support, pass an array of codec strings to the <em>codecs</em> array of the <em>settings object</em> in order of precedence.
+          Upon initialization, <strong>Audio5js</strong> will call the <em>ready</em> callback function in the <em>settings object</em>, passing it
+          an object containing the playback engine type (HTML or Flash) and the selected codec.
+        </p>
+        <p>
+          By default, <strong>Audio5js</strong> will <em class="label secondary">only use MP3</em> as a playback codec, and if no other suitable codec is supported by the browser, it wil
+          <span class="label secondary">select MP3 as a playback codec</span> and use either Flash or HTML as the underlying playback engine.
+        </p>
+      </div>
+      <div class="six columns">
+        <pre>
+          <code data-language="javascript">
+  var audio5js = new Audio5js({
+    swf_path: '/swf/audio5js.swf',
+    codecs: ['mp4', 'vorbis', 'mp3'],
+    ready: function(player) {
+      var audio_url;
+      switch (player.codec) {
+      case 'mp4':
+        audio_url = '/audio/song.mp4';
+        break;
+      case 'vorbis':
+        audio_url = '/audio/song.ogg';
+        break;
+      default:
+        audio_url = '/audio/song.mp3';
+        break;
+      }
+      this.load(audio_url);
+      this.play();
+    }
+  });
+          </code>
+        </pre>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <header class="twelve columns">
+        <h1 class="subheader">Playback API</h1>
+      </header>
+    </div>
+    <div class="row">
+      <div class="six columns">
+        <p>
+          <strong>Audio5js</strong> lets you control the life-cycle of audio playback with the following API:
+        </p>
+        <ul>
+          <li>
+            <strong>load</strong> - Load an audio file to the player
+          </li>
+          <li>
+            <strong>play</strong> - Play loaded audio
+          </li>
+          <li>
+            <strong>pause</strong> - Pause playing audio
+          </li>
+          <li>
+            <strong>playPause</strong> - Toggle audio play / pause
+          </li>
+          <li>
+            <strong>volume</strong> - Get / Set audio volume
+          </li>
+          <li>
+            <strong>seek</strong> - Seek audio to time
+          </li>
+        </ul>
+        <p>
+          You should note the following when using the playback API:
+        </p>
+        <ul>
+          <li>Volume values range from <span class="label secondary">0 to 1</span>.</li>
+          <li>Seek values are should be passed as <span class="label secondary">seconds of total audio duration</span>.</li>
+        </ul>
+      </div>
+      <div class="six columns">
+        <pre>
+          <code data-language="html">
+  &lt;a id="play"&gt;Play / Pause&lt;/a&gt;
+  &lt;a id="seek"&gt;Move to Start&lt;/a&gt;
+  &lt;script&gt;
+    var play = document.getElementById('play');
+    var seek = document.getElementById('seek');
+
+    var playPause = function () {
+      this[this.playing ? 'pause' : 'play']();
+      // or simply call this.playPause();
+    }
+
+    var moveToStart = function () {
+      this.seek(0);
+      this.volume(1);
+    }
+
+    var audio5js = new Audio5js({
+      ready: function () {
+        this.load('/audio/song.mp3');
+        play.addEventListener('click',
+          playPause.bind(this));
+        seek.addEventListener('click',
+          moveToStart.bind(this));
+      }
+    });
+  &lt;/script&gt;
+          </code>
+        </pre>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <header class="twelve columns">
+        <h1 class="subheader">Playback Events</h1>
+      </header>
+    </div>
+    <div class="row">
+      <div class="six column">
+        <p>
+          Being a good citizen of the Javascript world, <strong>Audio5js</strong> provides some useful events that you can subscribe to when implementing your shiny audio player.
+        </p>
+        <ul>
+          <li>
+            <strong>canplay</strong> - triggered when enough audio is buffered for playback to begin. Analogue to HTML5 Audio <em class="label secondary">canplay</em> event.
+          </li>
+          <li>
+            <strong>play</strong> - triggered when the audio begins playing. Analogue to HTML5 Audio <em class="label secondary">play</em> event.
+          </li>
+          <li>
+            <strong>pause</strong> - triggered when the audio is paused. Analogue to HTML5 Audio <em class="label secondary">pause</em> event.
+          </li>
+          <li>
+            <strong>ended</strong> - triggered when the audio playback has ended. Analogue to HTML5 Audio <em class="label secondary">ended</em> event.
+          </li>
+          <li>
+            <strong>error</strong> - triggered when the audio load error occurred. Analogue to HTML5 Audio <em class="label secondary">error</em> event.
+          </li>
+          <li>
+            <strong>timeupdate</strong> - triggered when the audio playhead position changes (during playback). Analogue to HTML5 Audio <em class="label secondary">timeupdate</em> event.
+          </li>
+          <li>
+            <strong>progress</strong> - triggered while audio file is being downloaded by the browser. Analogue to HTML5 Audio <em class="label secondary">progress</em> event.
+          </li>
+        </ul>
+        <p>
+          To subscribe to an event triggered by <strong>Audio5js</strong>, you can use the <em class="label secondary">on</em> method. Similarly, to unsubscribe from an event, you can use the <em class="label secondary">off</em> method.
+        </p>
+      </div>
+      <div class="six columns">
+        <pre>
+          <code data-language="javascript">
+  var audioReady = function () {
+    //this points to the Audio5js instance
+    this.on('play', function () {
+      console.log('play');
+    }, this);
+    this.on('pause', function () {
+      console.log('pause');
+    }, this);
+    this.on('ended', function () {
+      console.log('ended');
+    }, this);
+
+    // timeupdate event passes audio
+    // duration and position to callback
+    this.on('timeupdate', function (duration, position) {
+      console.log(duration, position);
+    }, this);
+
+    // progress event passes load_percent to callback
+    this.on('progress', function (load_percent) {
+      console.log(load_percent);
+    }, this);
+
+    //error event passes error object to callback
+    this.on('error', function (error) {
+      console.log(error.message);
+    }, this);
+  }
+
+  var audio5js = new Audio5js({
+    ready: audioReady
+  });
+
+          </code>
+        </pre>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <header class="twelve columns">
+        <h1 class="subheader">Source Code &amp; Documentation</h1>
+      </header>
+    </div>
+    <div class="row">
+      <div class="twelve columns">
+        <p>
+          <strong>Audio5js</strong> is freely available on <a href="https://github.com/zohararad/audio5js">Github</a> along with a more detailed documentation and complete code comments.
+        </p>
+        <p>
+          Feel free to fork, add, fix and send me pull requests, or open issues in the <a href="https://github.com/zohararad/audio5js/issues">project's issue tracker</a> on Github.
+        </p>
+      </div>
+    </div>
+  </section>
+  <footer id="copyright">
+    <div class="row">
+      <div class="twelve columns text-center">
+        <p>
+          <strong>Audio5js</strong> &copy; 2013. Zohar Arad.
+        </p>
+      </div>
+    </div>
+  </footer>
+  <script src="js/rainbow-custom.min.js"></script>
+</body>
+</html>
