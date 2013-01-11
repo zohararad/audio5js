@@ -220,7 +220,8 @@ var audioReady = function () {
 
 Browser-based audio isn't perfect, and it's more than likely that you'll need to serve the same audio in two formats, to support
 a wider crowd. If you intend to play different audio sources, based on browser codec support, pass a list of desired codecs to the
-`codecs` array of the settings object.
+`codecs` array of the settings object. Note that passed codecs should be listed in order or precedence and
+that 'mp3' is always the fallback codec in case no other codec is supported by the browser.
 
 Here's an example of initializing Audio5js with multiple audio sources, based on browser support:
 
