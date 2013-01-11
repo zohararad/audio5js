@@ -9,3 +9,14 @@ code {
   background-color: #f3f3f3;
 }
 
+.row ul {
+  margin-left: 20px;
+}
+
+#play {
+  width: 150px;
+}
+
+#engine, #loaded, #time {
+  margin-left: 15px;
+}
