@@ -110,6 +110,7 @@ Audio5js exposes the following API:
 * **mp3** - check for `audio/mpeg; codecs="mp3"`. Example - `Audio5js.can_play('mp3')`
 * **vorbis** - check for `audio/ogg; codecs="vorbis"`. Example - `Audio5js.can_play('vorbis')`
 * **opus** - check for `audio/ogg; codecs="opus"`. Example - `Audio5js.can_play('opus')`
+* **webm** - check for `audio/webm; codecs="vorbis"`. Example - `Audio5js.can_play('webm')`
 * **mp4** - check for `audio/mp4; codecs="mp4a.40.5"`. Example - `Audio5js.can_play('mp4')`
 * **wav** - check for `audio/wav; codecs="1"`. Example - `Audio5js.can_play('wav')`
 

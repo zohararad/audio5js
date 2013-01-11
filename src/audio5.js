@@ -156,6 +156,9 @@
       case 'opus':
         mime_str = 'audio/ogg; codecs="opus"';
         break;
+      case 'webm':
+        mime_str = 'audio/webm; codecs="vorbis"';
+        break;
       case 'mp4':
         mime_str = 'audio/mp4; codecs="mp4a.40.5"';
         break;
