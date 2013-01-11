@@ -282,6 +282,30 @@ needs to load the audio. Here's an example of how to load and play audio on Safa
 </script>
 ```
 
+## AMD / RequireJS
+
+Audio5js comes baked with AMD / RequireJS support. Assuming your public directory structure is as above, here's an example of
+how to use Audio5js with RequireJS:
+
+Your HTML should look something like this:
+
+```html
+<script src="js/require.js" data-main="js/player"></script>
+```
+
+Inside `js/player.js` you can now require Audio5js like so:
+
+```javascript
+require(["js/audio5"], function (Audio5js) {
+  var audio5 = new Audio5js({
+    ready: function () {
+      this.load('/somesong.mp3');
+      this.play();
+    }
+  });
+} );
+```
+
 ## Browser Support
 
 Audio5js doesn't try to please everyone. Having said that, it has been successfully tested on:
