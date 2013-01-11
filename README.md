@@ -295,7 +295,7 @@ Your HTML should look something like this:
 
 Inside `js/player.js` you can now require Audio5js like so:
 
-```
+```javascript
 require(["js/audio5"], function (Audio5js) {
   var audio5 = new Audio5js({
     ready: function () {
