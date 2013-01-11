@@ -560,17 +560,17 @@
      */
     swf_path: '/swf/audiojs.swf',
     /**
-     * {Boolean} flag indicating whether to use a Flash or an HTML5 audio player
-     */
-    use_flash: util.use_flash,
-    /**
      * {Boolean} flag indicating whether to throw errors to the page or trigger an error event
      */
     throw_errors: true,
     /**
      * {Boolean} flag indicating whether to format player duration and position to hh:mm:ss or pass as raw seconds
      */
-    format_time: true
+    format_time: true,
+    /**
+     * {Array} list of codecs to try and use when initializing the player. Used to selectively initialize the internal audio player based on codec support
+     */
+    codecs: ['mp3']
   };
 
   /**
@@ -617,13 +617,43 @@
      */
     init: function (s) {
       this.settings = s;
-      this.audio = this.settings.use_flash ? new FlashAudioPlayer() : new HTML5AudioPlayer();
+      this.audio = this.getPlayer();
       this.bindAudioEvents();
       if (this.settings.use_flash) {
         this.audio.init(s.swf_path);
       } else {
         this.audio.init();
       }
+    },
+    /**
+     * Gets a new audio player instance based on codec support as defined in settings.codecs array.
+     * Defaults to MP3 player either HTML or Flash based.
+     * @return {FlashAudioPlayer,HTML5AudioPlayer} audio player instance
+     */
+    getPlayer: function () {
+      var i, l, player;
+      for (i = 0, l = this.settings.codecs.length; i < l; i++) {
+        var codec = this.settings.codecs[i];
+        if (Audio5js.can_play(codec)) {
+          player = new HTML5AudioPlayer();
+          this.settings.use_flash = false;
+          this.settings.player = {
+            engine: 'html',
+            codec: codec
+          };
+          break;
+        }
+      }
+      if (player === undefined) {
+        // here we double check for mp3 support instead of defaulting to Flash in case user overrode the settings.codecs array with an empty array.
+        this.settings.use_flash = !Audio5js.can_play('mp3');
+        player = this.settings.use_flash ? new FlashAudioPlayer() : new HTML5AudioPlayer();
+        this.settings.player = {
+          engine: (this.settings.use_flash ? 'flash' : 'html'),
+          codec: 'mp3'
+        };
+      }
+      return player;
     },
     /**
      * Bind events from audio object to internal callbacks
@@ -691,7 +721,7 @@
      */
     onReady: function () {
       if (typeof (this.settings.ready) === 'function') {
-        this.settings.ready.call(this);
+        this.settings.ready.call(this, this.settings.player);
       }
     },
     /**

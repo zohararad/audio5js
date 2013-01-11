@@ -51,10 +51,10 @@ Now, you can include the Javascript in your HTML, and instantiate the Audio play
 The Audio5js object accepts a configuration object with the following settings:
 
 * **swf_path** - The relative path to the MP3 Flash fallback SWF. Defaults to `/swf/audio5js.swf`.
-* **use_flash** - A boolean flag indicating whether the underlying audio player should use Flash or HTML5. Defaults to `true` in browsers that do not support MP3 playback or `false` otherwise.
+* **codecs** - Array of audio codecs to the player should try and play. Used to initialize the internal audio player based on codec support. Defaults to `['mp3']`.
 * **throw_errors** - A boolean flag indicating whether the player throws errors, or triggers an error event. Defaults to `true`.
 * **format_time** - A boolean flag indicating whether playback position and duration should be formatted to a time-string (hh:mm:ss), or remain as unformatted numbers (measured in seconds). Defaults to `true`.
-* **ready** - An optional function that will be called when the player is ready to load and play audio.
+* **ready** - An optional callback that will be called when the player is ready to load and play audio. Called with an object containing player engine (html/flash) and supported codec as argument.
 
 Here's an example configuration using all the settings options above:
 
@@ -64,13 +64,15 @@ Here's an example configuration using all the settings options above:
   var initAudio = function () {
     var audio5js = new Audio5js({
       swf_path: '/statics/swf/audio5js.swf',
-      use_flash: true,
       throw_errors: true,
       format_time: true,
-      ready: function () {
+      ready: function (player) {
         //this points to the audio5js instance
         this.load('/audio/song.mp3');
         this.play();
+        //will output {engine:'html', codec: 'mp3'} in browsers that support MP3 playback.
+        // will output {engine:'flash', codec: 'mp3'} otherwise
+        console.log(player);
       }
     });
 
@@ -146,10 +148,8 @@ Audio5js exposes the following API:
   }
 
   var initAudio = function () {
-    var use_flash = !Audio5js.can_play('mp3');
     var audio5js = new Audio5js({
       swf_path: '/statics/swf/audio5js.swf',
-      use_flash: use_flash,
       throw_errors: true,
       format_time: true,
       ready: audioReady
@@ -219,34 +219,33 @@ var audioReady = function () {
 ## Fallbacks and multiple audio sources
 
 Browser-based audio isn't perfect, and it's more than likely that you'll need to serve the same audio in two formats, to support
-a wider crowd. Instead of complicating the internals of Audio5js to support selective, coded-based instantiation, Audio5js treats you as a grown-up,
-and leaves some of the "hard" work to you.
+a wider crowd. If you intend to play different audio sources, based on browser codec support, pass a list of desired codecs to the
+`codecs` array of the settings object.
 
 Here's an example of initializing Audio5js with multiple audio sources, based on browser support:
 
 ```javascript
 
-  var audio5js, audio_url;
-  var settings = {
+  var audio5js = new Audio5js({
     swf_path: '/swf/audio5js.swf',
-    ready: function (){
+    codecs: ['mp4', 'vorbis', 'mp3'],
+    ready: function(player) {
+      var audio_url;
+      switch (player.codec) {
+        case 'mp4':
+          audio_url = '/audio/song.mp4';
+          break;
+        case 'vorbis':
+          audio_url = '/audio/song.ogg';
+          break;
+        default:
+          audio_url = '/audio/song.mp3';
+          break;
+      }
       this.load(audio_url);
       this.play();
     }
-  };
-
-  if (Audio5js.can_play('mp4')) { //for browsers that support mp4
-    audio_url = '/audio/song.mp4';
-    settings.use_flash = false;
-  } else if (Audio5js.can_play('ogg')) { //for browsers that support ogg
-    audio_url = '/audio/song.ogg';
-    settings.use_flash = false;
-  } else { //fallback to mp3
-    audio_url = '/audio/song.mp3';
-    settings.use_flash = !Audio5js.can_play('mp3');
-  }
-
-  audio5js = new Audio5js(settings);
+  });
 
 ```
 
@@ -274,7 +273,6 @@ needs to load the audio. Here's an example of how to load and play audio on Safa
 
   var audio5js = new Audio5js({
     swf_path: './flash/audio5js.swf',
-    use_flash: !Audio5js.can_play('mp3'),
     ready: function () {
       var btn = document.getElementById('play-pause');
       btn.addEventListener('click', playPause.bind(this), false);
