@@ -150,8 +150,11 @@
       case 'mp3':
         mime_str = 'audio/mpeg; codecs="mp3"';
         break;
-      case 'ogg':
+      case 'vorbis':
         mime_str = 'audio/ogg; codecs="vorbis"';
+        break;
+      case 'opus':
+        mime_str = 'audio/ogg; codecs="opus"';
         break;
       case 'mp4':
         mime_str = 'audio/mp4; codecs="mp4a.40.5"';

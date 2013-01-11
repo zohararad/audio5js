@@ -108,7 +108,8 @@ Audio5js exposes the following API:
 `Audio5js.can_play` class method supports the following mime-type queries:
 
 * **mp3** - check for `audio/mpeg; codecs="mp3"`. Example - `Audio5js.can_play('mp3')`
-* **ogg** - check for `audio/ogg; codecs="vorbis"`. Example - `Audio5js.can_play('ogg')`
+* **vorbis** - check for `audio/ogg; codecs="vorbis"`. Example - `Audio5js.can_play('vorbis')`
+* **opus** - check for `audio/ogg; codecs="opus"`. Example - `Audio5js.can_play('opus')`
 * **mp4** - check for `audio/mp4; codecs="mp4a.40.5"`. Example - `Audio5js.can_play('mp4')`
 * **wav** - check for `audio/wav; codecs="1"`. Example - `Audio5js.can_play('wav')`
 
