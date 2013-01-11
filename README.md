@@ -292,6 +292,7 @@ Audio5js doesn't try to please everyone. Having said that, it has been successfu
 * Safari 6
 * Opera 12 (Mac)
 * Safari Mobile (iOS 6.0)
+* Webkit Mobile (Android 4.0.4)
 
 ## TODO
 
