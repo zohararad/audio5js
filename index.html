@@ -347,14 +347,18 @@
       <div class="six columns">
         <pre>
           <code data-language="javascript">
-  $ ender add audio5js
+  $ ender add audio5
 
   // As a global package
-  var Audio5js = require('Audio5js');
-  var audio5js = new Audio5js({});
+  var Audio5js = require('audio5');
+  var audio5js = new Audio5js({
+    swf_path: 'node_modules/audio5/swf/audio5js.swf'
+  });
 
   // Or via Ender client
-  var audio5js = new $.Audio5js({});
+  var audio5 = new $.audio5({
+    swf_path: 'node_modules/audio5/swf/audio5js.swf'
+  });
           </code>
         </pre>
       </div>
