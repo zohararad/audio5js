@@ -1,0 +1,33 @@
+{
+  "JAVASCRIPT": {
+    "DIST_DIR": "./",
+    "audio5": [
+      "./src/copyright.js",
+      "./src/audio5.js"
+    ]
+  },
+  "JSHINT_OPTS": {
+    "curly": true,
+    "eqeqeq": true,
+    "forin": true,
+    "indent": 2,
+    "latedef": true,
+    "newcap": true,
+    "regexp": true,
+    "unused": true,
+    "undef": true,
+    "strict": true,
+    "asi": false,
+    "boss": false,
+    "debug": false,
+    "devel": false,
+    "evil": false,
+    "eqnull": false,
+    "white": false,
+    "sub": true,
+    "shadow": false,
+    "node": true,
+    "browser": true,
+    "wsh": true
+  }
+}
