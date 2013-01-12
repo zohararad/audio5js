@@ -9,7 +9,7 @@
       return factory(ns, $win);
     });
   } else { // <script>
-    this[ns] = factory(ns, $win);
+    $win[ns] = factory(ns, $win);
   }
 
 }(window, 'Audio5js', function (ns, $win) {
