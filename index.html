@@ -319,6 +319,50 @@
   <section>
     <div class="row">
       <header class="twelve columns">
+        <h1 class="subheader">RequireJS &amp; Ender.js</h1>
+      </header>
+    </div>
+    <div class="row">
+      <div class="six columns">
+        <p>
+          You can use <strong>Audio5js</strong> with RequireJS.
+        </p>
+      </div>
+      <div class="six columns">
+        <pre>
+          <code data-language="javascript">
+  require(["audio5.min"], function (Audio5js) {
+    var audio5js = new Audio5js({});
+  });
+          </code>
+        </pre>
+      </div>
+    </div>
+    <div class="row">
+      <div class="six columns">
+        <p>
+          You can use <strong>Audio5js</strong> with Ender.js.
+        </p>
+      </div>
+      <div class="six columns">
+        <pre>
+          <code data-language="javascript">
+  $ ender add audio5js
+
+  // As a global package
+  var Audio5js = require('Audio5js');
+  var audio5js = new Audio5js({});
+
+  // Or via Ender client
+  var audio5js = new $.Audio5js({});
+          </code>
+        </pre>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <header class="twelve columns">
         <h1 class="subheader">Source Code &amp; Documentation</h1>
       </header>
     </div>
