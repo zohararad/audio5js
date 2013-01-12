@@ -306,6 +306,28 @@ require(["js/audio5"], function (Audio5js) {
 } );
 ```
 
+## Ender.js
+
+Audio5js can also be used with Ender.js. Here's how you can add it to your project:
+
+```bash
+# add audio5 as dependency
+$ ender build audio5
+```
+
+```javascript
+//use as a global package
+var Audio5js = require('audio5');
+var player = new Audio5js({
+  swf_path: 'node_modules/audio5/swf/audio5js.swf'
+});
+
+// or via the Ender $ object
+var play = new $.audio5({
+  swf_path: 'node_modules/audio5/swf/audio5js.swf'
+});
+```
+
 ## Browser Support
 
 Audio5js doesn't try to please everyone. Having said that, it has been successfully tested on:
