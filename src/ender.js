@@ -1,9 +1,9 @@
 (function ($) {
   "use strict";
 
-  var Audio5js = require('audio5js');
+  var Audio5 = require('audio5');
   $.ender({
-    Audio5js: Audio5js
+    Audio5: Audio5
   });
-  provide("Audio5js", Audio5js);
+  provide("Audio5", Audio5);
 }(ender));
