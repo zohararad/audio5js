@@ -16,6 +16,7 @@
     "regexp": true,
     "unused": true,
     "undef": true,
+    "plusplus": true,
     "strict": true,
     "asi": false,
     "boss": false,

@@ -1,5 +1,6 @@
 (function (ns, factory) {
   "use strict";
+  var module = this.module, define = this.define;
 
   if (module !== undefined && module.exports) { // CommonJS
     module.exports = factory(ns);
