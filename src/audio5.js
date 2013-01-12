@@ -1,20 +1,22 @@
-(function (ns, factory) {
+(function ($win, ns, factory) {
   "use strict";
-  var module = this.module, define = this.define;
 
+  var module = $win.module, define = $win.define;
   if (module !== undefined && module.exports) { // CommonJS
-    module.exports = factory(ns);
+    module.exports = factory(ns, $win);
   } else if (typeof (define) === 'function' && define.amd) { // AMD
     define(function () {
-      return factory(ns);
+      return factory(ns, $win);
     });
   } else { // <script>
-    this[ns] = factory(ns);
+    this[ns] = factory(ns, $win);
   }
 
-}('Audio5js', function (ns) {
+}(window, 'Audio5js', function (ns, $win) {
 
   "use strict";
+
+  var ActiveXObject = $win.ActiveXObject;
 
   /**
    * AudioError Class
