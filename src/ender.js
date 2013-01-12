@@ -1,3 +1,3 @@
 ender.ender({
-  audio5js: require('audio5js')
+  audio5: require('audio5')
 });
