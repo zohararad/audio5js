@@ -8,12 +8,6 @@
   "contributors": [],
   "main": "./audio5.js",
   "ender": "./src/ender.js",
-  "files": [
-    "./audio5.js",
-    "./audio5.min.js",
-    "./swf",
-    "./src"
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/zohararad/audio5js.git"
