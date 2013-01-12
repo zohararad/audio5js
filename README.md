@@ -15,7 +15,7 @@ Audio5js tries to address or avoid the following:
 
 ## Getting Started
 
-Audio5js requires two components to work - the Javascript library `audio5.js` (or the minified version `audio5.min.js`) and the SWF fallback, found in `flash/audio5js.swf`.
+Audio5js requires two components to work - the Javascript library `audio5.js` (or the minified version `audio5.min.js`) and the SWF fallback, found in `swf/audio5js.swf`.
 
 Simply download the source code, extract, and place both files somewhere in your project. For the purpose of demonstration,
 let's assume your project directory structure looks like this:
