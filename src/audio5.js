@@ -1,3 +1,8 @@
+/*!
+ * Audio5js: HTML5 Audio Compatibility Layer
+ * https://github.com/zohararad/audio5js
+ * License MIT (c) Zohar Arad 2013
+ */
 (function ($win, ns, factory) {
   "use strict";
 
@@ -143,24 +148,24 @@
       var a = document.createElement('audio');
       var mime_str;
       switch (mime_type) {
-      case 'mp3':
-        mime_str = 'audio/mpeg; codecs="mp3"';
-        break;
-      case 'vorbis':
-        mime_str = 'audio/ogg; codecs="vorbis"';
-        break;
-      case 'opus':
-        mime_str = 'audio/ogg; codecs="opus"';
-        break;
-      case 'webm':
-        mime_str = 'audio/webm; codecs="vorbis"';
-        break;
-      case 'mp4':
-        mime_str = 'audio/mp4; codecs="mp4a.40.5"';
-        break;
-      case 'wav':
-        mime_str = 'audio/wav; codecs="1"';
-        break;
+        case 'mp3':
+          mime_str = 'audio/mpeg; codecs="mp3"';
+          break;
+        case 'vorbis':
+          mime_str = 'audio/ogg; codecs="vorbis"';
+          break;
+        case 'opus':
+          mime_str = 'audio/ogg; codecs="opus"';
+          break;
+        case 'webm':
+          mime_str = 'audio/webm; codecs="vorbis"';
+          break;
+        case 'mp4':
+          mime_str = 'audio/mp4; codecs="mp4a.40.5"';
+          break;
+        case 'wav':
+          mime_str = 'audio/wav; codecs="1"';
+          break;
       }
       if (mime_str === undefined) {
         throw new Error('Unspecified Audio Mime Type');
@@ -247,9 +252,6 @@
   FlashAudioPlayer = function () {
     if (util.use_flash && !util.has_flash) {
       throw new Error('Flash Plugin Missing');
-    } else {
-      include(FlashAudioPlayer, Pubsub);
-      include(FlashAudioPlayer, AudioAttributes);
     }
   };
 
@@ -387,14 +389,14 @@
     }
   };
 
+  include(FlashAudioPlayer, Pubsub);
+  include(FlashAudioPlayer, AudioAttributes);
+
   /**
    * HTML5 Audio Player
    * @constructor
    */
-  HTML5AudioPlayer = function () {
-    include(HTML5AudioPlayer, Pubsub);
-    include(HTML5AudioPlayer, AudioAttributes);
-  };
+  HTML5AudioPlayer = function () {};
 
   HTML5AudioPlayer.prototype = {
     /**
@@ -546,6 +548,9 @@
     }
   };
 
+  include(HTML5AudioPlayer, Pubsub);
+  include(HTML5AudioPlayer, AudioAttributes);
+
   /**
    * Default settings object
    * @type {Object}
@@ -575,8 +580,6 @@
    * @constructor
    */
   Audio5js = function (s) {
-    include(Audio5js, Pubsub);
-    include(Audio5js, AudioAttributes);
     s = s || {};
     var k;
     for (k in settings) {
@@ -779,6 +782,9 @@
       this.trigger('progress', loaded);
     }
   };
+
+  include(Audio5js, Pubsub);
+  include(Audio5js, AudioAttributes);
 
   return Audio5js;
 
