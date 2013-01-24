@@ -531,8 +531,9 @@
      */
     volume: function (v) {
       if (v !== undefined && !isNaN(parseInt(v, 10))) {
-        this.audio.setVolume(v);
-        this.vol = v;
+        var vol = v < 0 ? 0 : Math.min(1, v);
+        this.audio.volume = vol;
+        this.vol = vol;
       } else {
         return this.vol;
       }
