@@ -292,7 +292,7 @@
 
     // timeupdate event passes audio
     // duration and position to callback
-    this.on('timeupdate', function (duration, position) {
+    this.on('timeupdate', function (position, duration) {
       console.log(duration, position);
     }, this);
 
