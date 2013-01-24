@@ -200,8 +200,8 @@ var audioReady = function () {
   this.on('ended', function () { console.log('ended'); }, this);
 
   // timeupdate event passes audio duration and position to callback
-  this.on('timeupdate', function (duration, position) {
-    console.log(duration, position);
+  this.on('timeupdate', function (position, duration) {
+    console.log(position, duration);
   }, this);
 
   // progress event passes load_percent to callback
