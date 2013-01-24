@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html ng-app="myapp">
+<head>
+	<title></title>
+</head>
+<body ng-controller="PlayCtrl">
+
+<!--Sending commands to audio5js-->
+<button ng-click="player.playPause()">Play/Pause</button>
+<!--Variables example-->
+<span>Position {{player.position}}</span>
+<span>Duration {{player.duration}}</span>
+
+<div style="font-size:12px;">
+	Filename : Orb of Envisage.mp3 <br>
+	&copy; Music by Dan-O at <a href="http://www.danosongs.com/">DanoSongs.com</a>
+</div>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.0.3/angular.min.js"></script>
+<script src="../../src/audio5.js"></script>
+<!--include ngAudio5.js after audio5.js-->
+<script src="../../src/ngAudio5.js"></script>
+
+<script>
+	//inject Audio5 service into our app
+	var app = angular.module('myapp',['Audio5']);
+
+	//Inject the AudioService singleton
+	var PlayCtrl = function ($scope, AudioService) {
+		//bind AudioService to scope
+		$scope.player = AudioService;
+		//Load the song, every event, class method and Instance attribute from audio5js are accessible from the template
+		$scope.player.load('http://danosongs.com/music/danosongs.com-orb-of-envisage.mp3');
+
+		//example of event binding
+		$scope.player.on('progress',function(){
+			$scope.$apply();
+		})
+	}
+</script>
+</body>
+</html>
