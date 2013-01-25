@@ -373,6 +373,9 @@ Audio5js doesn't try to please everyone. Having said that, it has been successfu
 
 ## Contributing
 
+* Thanks to [Alex Wolkov](https://github.com/altryne) for AngularJS Demo
+* Thanks to [Yehonatan Daniv](https://github.com/ydaniv) for AMD/RequireJS support
+
 Please feel free to fork, fix and send me pull requests. Alternatively, open tickets for bugs and feature requests.
 
 ## Credits
