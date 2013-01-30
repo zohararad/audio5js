@@ -3,6 +3,11 @@
  * https://github.com/zohararad/audio5js
  * License MIT (c) Zohar Arad 2013
  */
+/*!
+ * Audio5js: HTML5 Audio Compatibility Layer
+ * https://github.com/zohararad/audio5js
+ * License MIT (c) Zohar Arad 2013
+ */
 (function ($win, ns, factory) {
   "use strict";
 
@@ -77,7 +82,6 @@
   };
 
   var Pubsub = {
-    channels: {}, //hash of subscribed channels
     /**
      * Subscribe to event on a channel
      * @param {String} evt name of channel / event to subscribe
@@ -85,6 +89,9 @@
      * @param {Object} ctx the context in which the callback should be executed
      */
     on: function (evt, fn, ctx) {
+      if (this.channels === undefined) {
+        this.channels = {};
+      }
       this.channels[evt] = this.channels[evt] || [];
       this.channels[evt].push({fn: fn, ctx: ctx});
     },
@@ -148,24 +155,24 @@
       var a = document.createElement('audio');
       var mime_str;
       switch (mime_type) {
-        case 'mp3':
-          mime_str = 'audio/mpeg; codecs="mp3"';
-          break;
-        case 'vorbis':
-          mime_str = 'audio/ogg; codecs="vorbis"';
-          break;
-        case 'opus':
-          mime_str = 'audio/ogg; codecs="opus"';
-          break;
-        case 'webm':
-          mime_str = 'audio/webm; codecs="vorbis"';
-          break;
-        case 'mp4':
-          mime_str = 'audio/mp4; codecs="mp4a.40.5"';
-          break;
-        case 'wav':
-          mime_str = 'audio/wav; codecs="1"';
-          break;
+      case 'mp3':
+        mime_str = 'audio/mpeg; codecs="mp3"';
+        break;
+      case 'vorbis':
+        mime_str = 'audio/ogg; codecs="vorbis"';
+        break;
+      case 'opus':
+        mime_str = 'audio/ogg; codecs="opus"';
+        break;
+      case 'webm':
+        mime_str = 'audio/webm; codecs="vorbis"';
+        break;
+      case 'mp4':
+        mime_str = 'audio/mp4; codecs="mp4a.40.5"';
+        break;
+      case 'wav':
+        mime_str = 'audio/wav; codecs="1"';
+        break;
       }
       if (mime_str === undefined) {
         throw new Error('Unspecified Audio Mime Type');

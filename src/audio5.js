@@ -77,7 +77,6 @@
   };
 
   var Pubsub = {
-    channels: {}, //hash of subscribed channels
     /**
      * Subscribe to event on a channel
      * @param {String} evt name of channel / event to subscribe
@@ -85,6 +84,9 @@
      * @param {Object} ctx the context in which the callback should be executed
      */
     on: function (evt, fn, ctx) {
+      if (this.channels === undefined) {
+        this.channels = {};
+      }
       this.channels[evt] = this.channels[evt] || [];
       this.channels[evt].push({fn: fn, ctx: ctx});
     },
