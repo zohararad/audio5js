@@ -328,6 +328,33 @@ var play = new $.audio5({
 });
 ```
 
+## Angular.js
+
+Audio5js is available as an Angular.js service.
+
+```html```
+<!--include ngAudio5.js after audio5.js-->
+<script src="ngAudio5.js"></script>
+```
+
+```javascript```
+//inject Audio5 service into our app
+var app = angular.module('myapp',['Audio5']);
+
+//Inject the AudioService singleton into our controller
+var PlayCtrl = function ($scope, AudioService) {
+	//bind AudioService to scope
+	$scope.player = AudioService;
+	//Load the song, every event, class method and Instance attribute from audio5js are accessible from the template
+	$scope.player.load('http://danosongs.com/music/danosongs.com-orb-of-envisage.mp3');
+
+	//example of event binding
+	$scope.player.on('progress',function(){
+		$scope.$apply();
+	})
+}
+```
+
 ## Browser Support
 
 Audio5js doesn't try to please everyone. Having said that, it has been successfully tested on:
@@ -345,6 +372,9 @@ Audio5js doesn't try to please everyone. Having said that, it has been successfu
 * Test on mobile browsers (Android).
 
 ## Contributing
+
+* Thanks to [Alex Wolkov](https://github.com/altryne) for AngularJS Demo
+* Thanks to [Yehonatan Daniv](https://github.com/ydaniv) for AMD/RequireJS support
 
 Please feel free to fork, fix and send me pull requests. Alternatively, open tickets for bugs and feature requests.
 
