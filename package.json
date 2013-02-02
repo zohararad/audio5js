@@ -1,7 +1,7 @@
 {
   "name": "audio5",
   "description": "HTML5 Audio Compatibility Layer",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "homepage": "http://zohararad.github.com/audio5js/",
   "keywords": ["audio", "HTML5", "API"],
   "author": "Zohar Arad <zohar@zohararad.com> (http://zohararad.com)",
