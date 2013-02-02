@@ -111,7 +111,7 @@
      * @param {String} evt name of channel / event to trigger
      */
     trigger: function (evt) {
-      if (this.channels.hasOwnProperty(evt)) {
+      if (this.channels && this.channels.hasOwnProperty(evt)) {
         var args = Array.prototype.slice.call(arguments, 1);
         var i, l;
         for (i = 0, l = this.channels[evt].length; i < l; i++) {
