@@ -3,7 +3,11 @@
   "description": "HTML5 Audio Compatibility Layer",
   "version": "0.1.5",
   "homepage": "http://zohararad.github.com/audio5js/",
-  "keywords": ["audio", "HTML5", "API"],
+  "keywords": [
+    "audio",
+    "HTML5",
+    "API"
+  ],
   "author": "Zohar Arad <zohar@zohararad.com> (http://zohararad.com)",
   "contributors": [],
   "main": "./audio5.js",
@@ -11,5 +15,11 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/zohararad/audio5js.git"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.0rc7",
+    "grunt-contrib-uglify": "~0.1.1rc6",
+    "grunt-contrib-jshint": "~0.1.0",
+    "grunt-contrib-concat": "~0.1.2rc6"
   }
 }

@@ -4,6 +4,7 @@
  * License MIT (c) Zohar Arad 2013
  */
 (function ($win, ns, factory) {
+  /*global define */
   "use strict";
 
   if (typeof (module) !== 'undefined' && module.exports) { // CommonJS
