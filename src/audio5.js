@@ -546,9 +546,16 @@
      * @param {Float} position audio position in seconds to seek to.
      */
     seek: function (position) {
+      var playing = this.playing;
       this.position = position;
       this.audio.currentTime = position;
-      this.play();
+      if (playing) {
+        this.play();
+      } else {
+        if (this.audio.buffered !== null && this.audio.buffered.length) {
+          this.trigger('timeupdate', this.position, this.duration);
+        }
+      }
     }
   };
 
