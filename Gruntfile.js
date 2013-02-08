@@ -51,6 +51,11 @@ module.exports = function(grunt) {
     bump: {
       options: {},
       files: [ 'package.json' ]
+    },
+    exec: {
+      copy_bower: {
+        cmd: 'cp ./<%= pkg.name %>*.js ../audio5js-bower/; cp ./swf/*.swf ../audio5js-bower/'
+      }
     }
   });
 
@@ -58,8 +63,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-bumpx');
+  grunt.loadNpmTasks('grunt-exec');
 
   // Default task(s).
   grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
