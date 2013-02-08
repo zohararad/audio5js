@@ -47,6 +47,10 @@ module.exports = function(grunt) {
         "browser": true,
         "wsh": true
       }
+    },
+    bump: {
+      options: {},
+      files: [ 'package.json' ]
     }
   });
 
@@ -54,8 +58,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-bumpx');
 
   // Default task(s).
   grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
+  grunt.registerTask('release', ['jshint', 'concat', 'uglify', 'bump::patch']);
 
 };
