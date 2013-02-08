@@ -292,9 +292,7 @@
       this.position = position;
       this.duration = duration;
       this.seekable = seekable;
-      if (this.playing) {
-        this.trigger('timeupdate', position, (this.seekable ? duration : null));
-      }
+      this.trigger('timeupdate', position, (this.seekable ? duration : null));
     },
     /**
      * ExternalInterface download progress callback. Fires as long as audio file is downloaded by browser.
