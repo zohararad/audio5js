@@ -50,11 +50,11 @@ module.exports = function(grunt) {
     },
     bump: {
       options: {},
-      files: [ 'package.json' ]
+      files: [ 'package.json', 'bower/component.json' ]
     },
     exec: {
       copy_bower: {
-        cmd: 'cp ./<%= pkg.name %>*.js ../audio5js-bower/; cp ./swf/*.swf ../audio5js-bower/'
+        cmd: 'cp ./<%= pkg.name %>*.js ./bower/; cp ./swf/*.swf ./bower/'
       }
     }
   });
@@ -68,6 +68,7 @@ module.exports = function(grunt) {
 
   // Default task(s).
   grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
-  grunt.registerTask('release', ['jshint', 'concat', 'uglify', 'bump::patch']);
+  grunt.registerTask('bower', ['jshint', 'concat', 'uglify', 'exec:copy_bower']);
+  grunt.registerTask('release', ['jshint', 'concat', 'uglify', 'exec:copy_bower', 'bump::patch']);
 
 };
