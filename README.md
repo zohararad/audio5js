@@ -355,6 +355,23 @@ var PlayCtrl = function ($scope, AudioService) {
 }
 ```
 
+## Bower Support
+
+Audio5js is available as a Bower package.
+
+```
+$ bower install audio5js
+```
+
+```html
+<script src="components/audio5js/audio5.min.js"></script>
+<script>
+var player = new Audio5js({
+  swf_path: 'components/audio5js/audio5js.swf'
+});
+</script>
+```
+
 ## Browser Support
 
 Audio5js doesn't try to please everyone. Having said that, it has been successfully tested on:
