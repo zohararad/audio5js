@@ -131,14 +131,14 @@
      */
     flash_embed_code: (function () {
       var prefix;
-      var s = '<param name="movie" value="$2?playerInstance=' + ns + '.flash.instances[\'$1\']&datetime=$3"/>' +
+      var s = '<param name="movie" value="$2?playerInstance=window.__audio4js_flash__.instances[\'$1\']&datetime=$3"/>' +
         '<param name="wmode" value="transparent"/>' +
         '<param name="allowscriptaccess" value="always" />' +
         '</object>';
       if (ActiveXObject) {
         prefix = '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="1" height="1" id="$1">';
       } else {
-        prefix = '<object type="application/x-shockwave-flash" data="$2?playerInstance=' + ns + '.flash.instances[\'$1\']&datetime=$3" width="1" height="1" id="$1" >';
+        prefix = '<object type="application/x-shockwave-flash" data="$2?playerInstance=window.__audio4js_flash__.instances[\'$1\']&datetime=$3" width="1" height="1" id="$1" >';
       }
       return prefix + s;
     }()),
@@ -249,6 +249,16 @@
   };
 
   /**
+   * Global object holding flash-based player instances.
+   * Used to create a bridge between Flash's ExternalInterface calls and FlashAudioPlayer instances
+   * @type {Object}
+   */
+  var globalFlash = $win.__audio4js_flash__ = $win.__audio4js_flash__ || {
+    instances: { }, /** FlashAudioPlayer instance hash */
+    count: 0 /** FlashAudioPlayer instance count */
+  };
+
+  /**
    * Flash MP3 Audio Player Class
    * @constructor
    */
@@ -264,9 +274,9 @@
      * @param {String} swf_src path to audio player SWF file
      */
     init: function (swf_src) {
-      Audio5js.flash.count += 1;
-      this.id = ns + Audio5js.flash.count;
-      Audio5js.flash.instances[this.id] = this;
+      globalFlash.count += 1;
+      this.id = ns + globalFlash.count;
+      globalFlash.instances[this.id] = this;
       this.embed(swf_src);
     },
     /**
@@ -597,16 +607,6 @@
       }
     }
     this.init(s);
-  };
-
-  /**
-   * Global object holding flash-based player instances.
-   * Used to create a bridge between Flash's ExternalInterface calls and FlashAudioPlayer instances
-   * @type {Object}
-   */
-  Audio5js.flash = {
-    instances: { }, /** FlashAudioPlayer instance hash */
-    count: 0 /** FlashAudioPlayer instance count */
   };
 
   /**
