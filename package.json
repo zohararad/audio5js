@@ -22,6 +22,8 @@
     "grunt-contrib-jshint": "~0.1.0",
     "grunt-contrib-concat": "~0.1.2rc6",
     "grunt-bumpx": "~0.1.0",
-    "grunt-exec": "https://github.com/jharding/grunt-exec/tarball/grunt0.4rc"
+    "grunt-exec": "https://github.com/jharding/grunt-exec/tarball/grunt0.4rc",
+    "mocha": "1.8.1",
+    "chai": "~1.5.0"
   }
 }
