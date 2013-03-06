@@ -245,7 +245,7 @@
     duration: 0, /** {Float} audio duration (sec) */
     position: 0, /** {Float} audio position (sec) */
     load_percent: 0, /** {Float} audio file load percent (%) */
-    seekable: false /** {Boolean} is loaded audio seekable */
+    seekable: null /** {Boolean} is loaded audio seekable */
   };
 
   /**
