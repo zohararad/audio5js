@@ -15,7 +15,7 @@
       return factory(ns, $win);
     });
   } else { // <script>
-    factory(ns, $win);
+    $win[ns] = factory(ns, $win);
   }
 
 }(window, 'Audio5js', function (ns, $win) {
@@ -132,14 +132,14 @@
      */
     flash_embed_code: (function () {
       var prefix;
-      var s = '<param name="movie" value="$2?playerInstance=window.' + ns + '.flash.instances[\'$1\']&datetime=$3"/>' +
+      var s = '<param name="movie" value="$2?playerInstance=window.' + ns + '_flash.instances[\'$1\']&datetime=$3"/>' +
         '<param name="wmode" value="transparent"/>' +
         '<param name="allowscriptaccess" value="always" />' +
         '</object>';
       if (ActiveXObject) {
         prefix = '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="1" height="1" id="$1">';
       } else {
-        prefix = '<object type="application/x-shockwave-flash" data="$2?playerInstance=window.' + ns + '.flash.instances[\'$1\']&datetime=$3" width="1" height="1" id="$1" >';
+        prefix = '<object type="application/x-shockwave-flash" data="$2?playerInstance=window.' + ns + '_flash.instances[\'$1\']&datetime=$3" width="1" height="1" id="$1" >';
       }
       return prefix + s;
     }()),
@@ -209,7 +209,7 @@
       document.body.appendChild(d);
       if(typeof($win.swfobject) === 'object'){
         var fv = {
-          playerInstance: 'window.'+ ns + '.flash.instances["'+id+'"]'
+          playerInstance: 'window.'+ ns + '_flash.instances["'+id+'"]'
         };
         var params = {
           allowscriptaccess: 'always',
@@ -262,6 +262,16 @@
   };
 
   /**
+   * Global object holding flash-based player instances.
+   * Used to create a bridge between Flash's ExternalInterface calls and FlashAudioPlayer instances
+   * @type {Object}
+   */
+  var globalAudio5Flash = $win[ns + '_flash'] = $win[ns + '_flash'] || {
+    instances: { }, /** FlashAudioPlayer instance hash */
+    count: 0 /** FlashAudioPlayer instance count */
+  };
+
+  /**
    * Flash MP3 Audio Player Class
    * @constructor
    */
@@ -277,9 +287,9 @@
      * @param {String} swf_src path to audio player SWF file
      */
     init: function (swf_src) {
-      Audio5js.flash.count += 1;
-      this.id = ns + Audio5js.flash.count;
-      Audio5js.flash.instances[this.id] = this;
+      globalAudio5Flash.count += 1;
+      this.id = ns + globalAudio5Flash.count;
+      globalAudio5Flash.instances[this.id] = this;
       this.embed(swf_src);
     },
     /**
@@ -614,16 +624,6 @@
   };
 
   /**
-   * Global object holding flash-based player instances.
-   * Used to create a bridge between Flash's ExternalInterface calls and FlashAudioPlayer instances
-   * @type {Object}
-   */
-  Audio5js.flash = {
-    instances: { }, /** FlashAudioPlayer instance hash */
-    count: 0 /** FlashAudioPlayer instance count */
-  };
-
-  /**
    * Check if browser can play a given audio mime type.
    * @param {String} mime_type audio mime type to check.
    * @return {Boolean} is audio mime type supported by browser or not
@@ -809,7 +809,6 @@
   include(Audio5js, Pubsub);
   include(Audio5js, AudioAttributes);
 
-  $win[ns] = Audio5js;
   return Audio5js;
 
 }));
