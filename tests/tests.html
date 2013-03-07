@@ -9,6 +9,7 @@
     <div id="mocha"></div>
     <script src="mocha.js"></script>
     <script src="http://chaijs.com/chai.js"></script>
+    <!--<script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>-->
     <script>
       mocha.ui('bdd');
       mocha.setup({timeout: 5000});
@@ -21,7 +22,9 @@
     <script src="functional/audio5_playback_spec.js"></script>
     <script src="functional/audio5_callbacks_spec.js"></script>
     <script>
-      mocha.run();
+      setTimeout(function(){
+        mocha.run();
+      },1000);
     </script>
   </body>
 </html>
