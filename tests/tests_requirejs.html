@@ -12,7 +12,7 @@
     <!--<script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>-->
     <script>
       mocha.ui('bdd');
-      mocha.setup({timeout: 5000});
+      mocha.setup({timeout: 5000, ignoreLeaks: true});
       var expect = chai.expect;
       var should = chai.should();
       mocha.reporter('html');
