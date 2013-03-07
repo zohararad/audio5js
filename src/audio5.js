@@ -14,7 +14,7 @@
       return factory(ns, $win);
     });
   } else { // <script>
-    $win[ns] = factory(ns, $win);
+    factory(ns, $win);
   }
 
 }(window, 'Audio5js', function (ns, $win) {
@@ -131,14 +131,14 @@
      */
     flash_embed_code: (function () {
       var prefix;
-      var s = '<param name="movie" value="$2?playerInstance=' + ns + '.flash.instances[\'$1\']&datetime=$3"/>' +
+      var s = '<param name="movie" value="$2?playerInstance=window.' + ns + '.flash.instances[\'$1\']&datetime=$3"/>' +
         '<param name="wmode" value="transparent"/>' +
         '<param name="allowscriptaccess" value="always" />' +
         '</object>';
       if (ActiveXObject) {
         prefix = '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="1" height="1" id="$1">';
       } else {
-        prefix = '<object type="application/x-shockwave-flash" data="$2?playerInstance=' + ns + '.flash.instances[\'$1\']&datetime=$3" width="1" height="1" id="$1" >';
+        prefix = '<object type="application/x-shockwave-flash" data="$2?playerInstance=window.' + ns + '.flash.instances[\'$1\']&datetime=$3" width="1" height="1" id="$1" >';
       }
       return prefix + s;
     }()),
@@ -208,7 +208,7 @@
       document.body.appendChild(d);
       if(typeof($win.swfobject) === 'object'){
         var fv = {
-          playerInstance: ns + '.flash.instances["'+id+'"]'
+          playerInstance: 'window.'+ ns + '.flash.instances["'+id+'"]'
         };
         var params = {
           allowscriptaccess: 'always',
@@ -808,6 +808,7 @@
   include(Audio5js, Pubsub);
   include(Audio5js, AudioAttributes);
 
+  $win[ns] = Audio5js;
   return Audio5js;
 
 }));
