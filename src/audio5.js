@@ -204,12 +204,24 @@
       d.style.position = 'absolute';
       d.style.width = '1px';
       d.style.height = '1px';
-      d.style.top = '-2px';
-      var flashSource = this.flash_embed_code.replace(/\$1/g, id);
-      flashSource = flashSource.replace(/\$2/g, swf_location);
-      flashSource = flashSource.replace(/\$3/g, (new Date().getTime() + Math.random())); // Ensure swf is not pulled from cache
-      d.innerHTML = flashSource;
+      d.style.top = '1px';
       document.body.appendChild(d);
+      if(typeof($win.swfobject) === 'object'){
+        var fv = {
+          playerInstance: ns + '.flash.instances["'+id+'"]'
+        };
+        var params = {
+          allowscriptaccess: 'always',
+          wmode: 'transparent'
+        };
+        d.innerHTML = '<div id="'+id+'"></div>';
+        swfobject.embedSWF(swf_location + '?ts='+(new Date().getTime() + Math.random()), id, "1", "1", "9.0.0", null, fv, params);
+      } else {
+        var flashSource = this.flash_embed_code.replace(/\$1/g, id);
+        flashSource = flashSource.replace(/\$2/g, swf_location);
+        flashSource = flashSource.replace(/\$3/g, (new Date().getTime() + Math.random())); // Ensure swf is not pulled from cache
+        d.innerHTML = flashSource;
+      }
       return document.getElementById(id);
     },
     /**
@@ -274,12 +286,13 @@
      * @param {String} swf_src path to audio player SWF file
      */
     embed: function (swf_src) {
-      this.audio = util.embedFlash(swf_src, this.id);
+      util.embedFlash(swf_src, this.id);
     },
     /**
      * ExternalInterface callback indicating SWF is ready
      */
     eiReady: function () {
+      this.audio = document.getElementById(this.id);
       this.trigger('ready');
     },
     /**
