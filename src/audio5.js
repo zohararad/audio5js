@@ -5,6 +5,7 @@
  */
 (function ($win, ns, factory) {
   /*global define */
+  /*global swfobject */
   "use strict";
 
   if (typeof (module) !== 'undefined' && module.exports) { // CommonJS

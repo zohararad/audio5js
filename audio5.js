@@ -5,6 +5,7 @@
  */
 (function ($win, ns, factory) {
   /*global define */
+  /*global swfobject */
   "use strict";
 
   if (typeof (module) !== 'undefined' && module.exports) { // CommonJS
@@ -14,7 +15,7 @@
       return factory(ns, $win);
     });
   } else { // <script>
-    $win[ns] = factory(ns, $win);
+    factory(ns, $win);
   }
 
 }(window, 'Audio5js', function (ns, $win) {
@@ -131,14 +132,14 @@
      */
     flash_embed_code: (function () {
       var prefix;
-      var s = '<param name="movie" value="$2?playerInstance=' + ns + '.flash.instances[\'$1\']&datetime=$3"/>' +
+      var s = '<param name="movie" value="$2?playerInstance=window.' + ns + '.flash.instances[\'$1\']&datetime=$3"/>' +
         '<param name="wmode" value="transparent"/>' +
         '<param name="allowscriptaccess" value="always" />' +
         '</object>';
       if (ActiveXObject) {
         prefix = '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="1" height="1" id="$1">';
       } else {
-        prefix = '<object type="application/x-shockwave-flash" data="$2?playerInstance=' + ns + '.flash.instances[\'$1\']&datetime=$3" width="1" height="1" id="$1" >';
+        prefix = '<object type="application/x-shockwave-flash" data="$2?playerInstance=window.' + ns + '.flash.instances[\'$1\']&datetime=$3" width="1" height="1" id="$1" >';
       }
       return prefix + s;
     }()),
@@ -204,12 +205,24 @@
       d.style.position = 'absolute';
       d.style.width = '1px';
       d.style.height = '1px';
-      d.style.top = '-2px';
-      var flashSource = this.flash_embed_code.replace(/\$1/g, id);
-      flashSource = flashSource.replace(/\$2/g, swf_location);
-      flashSource = flashSource.replace(/\$3/g, (new Date().getTime() + Math.random())); // Ensure swf is not pulled from cache
-      d.innerHTML = flashSource;
+      d.style.top = '1px';
       document.body.appendChild(d);
+      if(typeof($win.swfobject) === 'object'){
+        var fv = {
+          playerInstance: 'window.'+ ns + '.flash.instances["'+id+'"]'
+        };
+        var params = {
+          allowscriptaccess: 'always',
+          wmode: 'transparent'
+        };
+        d.innerHTML = '<div id="'+id+'"></div>';
+        swfobject.embedSWF(swf_location + '?ts='+(new Date().getTime() + Math.random()), id, "1", "1", "9.0.0", null, fv, params);
+      } else {
+        var flashSource = this.flash_embed_code.replace(/\$1/g, id);
+        flashSource = flashSource.replace(/\$2/g, swf_location);
+        flashSource = flashSource.replace(/\$3/g, (new Date().getTime() + Math.random())); // Ensure swf is not pulled from cache
+        d.innerHTML = flashSource;
+      }
       return document.getElementById(id);
     },
     /**
@@ -245,7 +258,7 @@
     duration: 0, /** {Float} audio duration (sec) */
     position: 0, /** {Float} audio position (sec) */
     load_percent: 0, /** {Float} audio file load percent (%) */
-    seekable: false /** {Boolean} is loaded audio seekable */
+    seekable: null /** {Boolean} is loaded audio seekable */
   };
 
   /**
@@ -274,12 +287,13 @@
      * @param {String} swf_src path to audio player SWF file
      */
     embed: function (swf_src) {
-      this.audio = util.embedFlash(swf_src, this.id);
+      util.embedFlash(swf_src, this.id);
     },
     /**
      * ExternalInterface callback indicating SWF is ready
      */
     eiReady: function () {
+      this.audio = document.getElementById(this.id);
       this.trigger('ready');
     },
     /**
@@ -795,6 +809,7 @@
   include(Audio5js, Pubsub);
   include(Audio5js, AudioAttributes);
 
+  $win[ns] = Audio5js;
   return Audio5js;
 
 }));
