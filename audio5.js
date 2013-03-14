@@ -258,7 +258,8 @@
     duration: 0, /** {Float} audio duration (sec) */
     position: 0, /** {Float} audio position (sec) */
     load_percent: 0, /** {Float} audio file load percent (%) */
-    seekable: null /** {Boolean} is loaded audio seekable */
+    seekable: null, /** {Boolean} is loaded audio seekable */
+    ready: null /** {Boolean} is loaded audio seekable */
   };
 
   /**
@@ -638,6 +639,7 @@
      * @param {Object} s player settings object
      */
     init: function (s) {
+      this.ready = false;
       this.settings = s;
       this.audio = this.getPlayer();
       this.bindAudioEvents();
@@ -695,8 +697,16 @@
      * @param {String} url URL of audio to load
      */
     load: function (url) {
-      this.audio.load(url);
-      this.trigger('load');
+      var f = function(u){
+        this.audio.load(u);
+        this.trigger('load');
+      }.bind(this, url);
+
+      if(this.ready){
+        f();
+      } else {
+        this.on('ready', f);
+      }
     },
     /**
      * Play audio
@@ -746,9 +756,11 @@
      * Looks for ready callback in settings object and invokes it in the context of player instance
      */
     onReady: function () {
+      this.ready = true;
       if (typeof (this.settings.ready) === 'function') {
         this.settings.ready.call(this, this.settings.player);
       }
+      this.trigger('ready');
     },
     /**
      * Audio play event handler
