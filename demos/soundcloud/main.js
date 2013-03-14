@@ -4,11 +4,17 @@
 
   var audio5js = new Audio5js({
     swf_path:'../../swf/audio5js.swf',
+    throw_errors: true,
     ready: function () {
       var player = this;
 
       SC.initialize({
         client_id: "YOUR_CLIENT_ID"
+      });
+
+      player.on('canplay', function(){
+        console.log('canplay');
+        player.play();
       });
 
       // get last 10 tracks from SoundCloud and show them
@@ -32,7 +38,6 @@
             player.pause();
           }
           player.load(url);
-          player.play();
         }
       });
     }
