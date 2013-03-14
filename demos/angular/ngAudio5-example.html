@@ -29,13 +29,13 @@
 	var PlayCtrl = function ($scope, AudioService) {
 		//bind AudioService to scope
 		$scope.player = AudioService;
-		//Load the song, every event, class method and Instance attribute from audio5js are accessible from the template
-		$scope.player.load('http://danosongs.com/music/danosongs.com-orb-of-envisage.mp3');
+    //Load the song, every event, class method and Instance attribute from audio5js are accessible from the template
+    $scope.player.load('http://danosongs.com/music/danosongs.com-orb-of-envisage.mp3');
 
-		//example of event binding
-		$scope.player.on('progress',function(){
-			$scope.$apply();
-		})
+    //example of event binding
+    $scope.player.on('timeupdate',function(){
+      $scope.$apply();
+    })
 	}
 </script>
 </body>
