@@ -3,12 +3,9 @@
  * https://github.com/zohararad/audio5js
  * License MIT (c) Zohar Arad 2013
  */
-/*!
- * Audio5js: HTML5 Audio Compatibility Layer
- * https://github.com/zohararad/audio5js
- * License MIT (c) Zohar Arad 2013
- */
 (function ($win, ns, factory) {
+  /*global define */
+  /*global swfobject */
   "use strict";
 
   if (typeof (module) !== 'undefined' && module.exports) { // CommonJS
@@ -135,14 +132,14 @@
      */
     flash_embed_code: (function () {
       var prefix;
-      var s = '<param name="movie" value="$2?playerInstance=' + ns + '.flash.instances[\'$1\']&datetime=$3"/>' +
+      var s = '<param name="movie" value="$2?playerInstance=window.' + ns + '_flash.instances[\'$1\']&datetime=$3"/>' +
         '<param name="wmode" value="transparent"/>' +
         '<param name="allowscriptaccess" value="always" />' +
         '</object>';
       if (ActiveXObject) {
         prefix = '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="1" height="1" id="$1">';
       } else {
-        prefix = '<object type="application/x-shockwave-flash" data="$2?playerInstance=' + ns + '.flash.instances[\'$1\']&datetime=$3" width="1" height="1" id="$1" >';
+        prefix = '<object type="application/x-shockwave-flash" data="$2?playerInstance=window.' + ns + '_flash.instances[\'$1\']&datetime=$3" width="1" height="1" id="$1" >';
       }
       return prefix + s;
     }()),
@@ -208,12 +205,24 @@
       d.style.position = 'absolute';
       d.style.width = '1px';
       d.style.height = '1px';
-      d.style.top = '-2px';
-      var flashSource = this.flash_embed_code.replace(/\$1/g, id);
-      flashSource = flashSource.replace(/\$2/g, swf_location);
-      flashSource = flashSource.replace(/\$3/g, (new Date().getTime() + Math.random())); // Ensure swf is not pulled from cache
-      d.innerHTML = flashSource;
+      d.style.top = '1px';
       document.body.appendChild(d);
+      if(typeof($win.swfobject) === 'object'){
+        var fv = {
+          playerInstance: 'window.'+ ns + '_flash.instances["'+id+'"]'
+        };
+        var params = {
+          allowscriptaccess: 'always',
+          wmode: 'transparent'
+        };
+        d.innerHTML = '<div id="'+id+'"></div>';
+        swfobject.embedSWF(swf_location + '?ts='+(new Date().getTime() + Math.random()), id, "1", "1", "9.0.0", null, fv, params);
+      } else {
+        var flashSource = this.flash_embed_code.replace(/\$1/g, id);
+        flashSource = flashSource.replace(/\$2/g, swf_location);
+        flashSource = flashSource.replace(/\$3/g, (new Date().getTime() + Math.random())); // Ensure swf is not pulled from cache
+        d.innerHTML = flashSource;
+      }
       return document.getElementById(id);
     },
     /**
@@ -249,7 +258,18 @@
     duration: 0, /** {Float} audio duration (sec) */
     position: 0, /** {Float} audio position (sec) */
     load_percent: 0, /** {Float} audio file load percent (%) */
-    seekable: false /** {Boolean} is loaded audio seekable */
+    seekable: null, /** {Boolean} is loaded audio seekable */
+    ready: null /** {Boolean} is loaded audio seekable */
+  };
+
+  /**
+   * Global object holding flash-based player instances.
+   * Used to create a bridge between Flash's ExternalInterface calls and FlashAudioPlayer instances
+   * @type {Object}
+   */
+  var globalAudio5Flash = $win[ns + '_flash'] = $win[ns + '_flash'] || {
+    instances: { }, /** FlashAudioPlayer instance hash */
+    count: 0 /** FlashAudioPlayer instance count */
   };
 
   /**
@@ -268,9 +288,9 @@
      * @param {String} swf_src path to audio player SWF file
      */
     init: function (swf_src) {
-      Audio5js.flash.count += 1;
-      this.id = ns + Audio5js.flash.count;
-      Audio5js.flash.instances[this.id] = this;
+      globalAudio5Flash.count += 1;
+      this.id = ns + globalAudio5Flash.count;
+      globalAudio5Flash.instances[this.id] = this;
       this.embed(swf_src);
     },
     /**
@@ -278,12 +298,13 @@
      * @param {String} swf_src path to audio player SWF file
      */
     embed: function (swf_src) {
-      this.audio = util.embedFlash(swf_src, this.id);
+      util.embedFlash(swf_src, this.id);
     },
     /**
      * ExternalInterface callback indicating SWF is ready
      */
     eiReady: function () {
+      this.audio = document.getElementById(this.id);
       this.trigger('ready');
     },
     /**
@@ -296,9 +317,7 @@
       this.position = position;
       this.duration = duration;
       this.seekable = seekable;
-      if (this.playing) {
-        this.trigger('timeupdate', position, (this.seekable ? duration : null));
-      }
+      this.trigger('timeupdate', position, (this.seekable ? duration : null));
     },
     /**
      * ExternalInterface download progress callback. Fires as long as audio file is downloaded by browser.
@@ -550,9 +569,16 @@
      * @param {Float} position audio position in seconds to seek to.
      */
     seek: function (position) {
+      var playing = this.playing;
       this.position = position;
       this.audio.currentTime = position;
-      this.play();
+      if (playing) {
+        this.play();
+      } else {
+        if (this.audio.buffered !== null && this.audio.buffered.length) {
+          this.trigger('timeupdate', this.position, this.duration);
+        }
+      }
     }
   };
 
@@ -599,16 +625,6 @@
   };
 
   /**
-   * Global object holding flash-based player instances.
-   * Used to create a bridge between Flash's ExternalInterface calls and FlashAudioPlayer instances
-   * @type {Object}
-   */
-  Audio5js.flash = {
-    instances: { }, /** FlashAudioPlayer instance hash */
-    count: 0 /** FlashAudioPlayer instance count */
-  };
-
-  /**
    * Check if browser can play a given audio mime type.
    * @param {String} mime_type audio mime type to check.
    * @return {Boolean} is audio mime type supported by browser or not
@@ -623,6 +639,7 @@
      * @param {Object} s player settings object
      */
     init: function (s) {
+      this.ready = false;
       this.settings = s;
       this.audio = this.getPlayer();
       this.bindAudioEvents();
@@ -680,20 +697,32 @@
      * @param {String} url URL of audio to load
      */
     load: function (url) {
-      this.audio.load(url);
-      this.trigger('load');
+      var f = function(u){
+        this.audio.load(u);
+        this.trigger('load');
+      }.bind(this, url);
+
+      if(this.ready){
+        f();
+      } else {
+        this.on('ready', f);
+      }
     },
     /**
      * Play audio
      */
     play: function () {
-      this.audio.play();
+      if(!this.playing){
+        this.audio.play();
+      }
     },
     /**
      * Pause audio
      */
     pause: function () {
-      this.audio.pause();
+      if(this.playing){
+        this.audio.pause();
+      }
     },
     /**
      * Toggle audio play / pause
@@ -727,9 +756,11 @@
      * Looks for ready callback in settings object and invokes it in the context of player instance
      */
     onReady: function () {
+      this.ready = true;
       if (typeof (this.settings.ready) === 'function') {
         this.settings.ready.call(this, this.settings.player);
       }
+      this.trigger('ready');
     },
     /**
      * Audio play event handler
