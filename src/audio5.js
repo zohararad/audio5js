@@ -702,13 +702,17 @@
      * Play audio
      */
     play: function () {
-      this.audio.play();
+      if(!this.playing){
+        this.audio.play();
+      }
     },
     /**
      * Pause audio
      */
     pause: function () {
-      this.audio.pause();
+      if(this.playing){
+        this.audio.pause();
+      }
     },
     /**
      * Toggle audio play / pause
