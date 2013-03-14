@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Play 10 last sounds from SoundCloud with Audio5JS.</title>
+<style>
+* {
+  margin:0;
+  padding:0;
+}
+body {
+  font-family:helvetica, sans-serif;
+  line-height:1.5;
+  padding:30px;
+}
+ul {
+  list-style:none;
+}
+.note {
+  margin:0 0 1em;
+}
+.track b {
+  cursor: pointer;
+  border-bottom:1px dashed #000;
+  font-weight:normal;
+}
+</style>
+</head>
+<body>
+  <p class="note">Click on the tracks below to play 10 last sounds from <a href="http://developers.soundcloud.com/docs/api/sdks#javascript">SoundCloud</a> with <a href="https://github.com/zohararad/audio5js">Audio5JS.</a></p>
+
+  <ul></ul>
+
+  <script src="//connect.soundcloud.com/sdk.js"></script>
+  <script src="../../src/audio5.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
