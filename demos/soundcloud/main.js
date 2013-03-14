@@ -27,8 +27,11 @@
       container.addEventListener('click', function (e) {
         var track = e.target.parentNode;
         if (track.className.indexOf('track') !== -1) {
-          player.pause();
-          player.load(track.getAttribute('data-stream'));
+          var url = track.getAttribute('data-stream');
+          if(player.playing){
+            player.pause();
+          }
+          player.load(url);
           player.play();
         }
       });
