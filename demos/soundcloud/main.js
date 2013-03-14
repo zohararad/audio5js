@@ -13,7 +13,6 @@
       });
 
       player.on('canplay', function(){
-        console.log('canplay');
         player.play();
       });
 
