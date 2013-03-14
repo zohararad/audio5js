@@ -429,12 +429,20 @@
      * Initialize the player instance
      */
     init: function () {
+      this.trigger('ready');
+    },
+    createAudio: function(){
       this.audio = new Audio();
       this.audio.autoplay = false;
       this.audio.preload = 'auto';
       this.audio.autobuffer = true;
       this.bindEvents();
-      this.trigger('ready');
+    },
+    destroyAudio: function(){
+      if(this.audio){
+        this.unbindEvents();
+        delete this.audio;
+      }
     },
     /**
      * Bind DOM events to Audio object
@@ -446,6 +454,14 @@
       this.audio.addEventListener('ended', this.onEnded.bind(this));
       this.audio.addEventListener('canplay', this.onLoad.bind(this));
       this.audio.addEventListener('error', this.onError.bind(this));
+    },
+    unbindEvents: function(){
+      this.audio.removeEventListener('timeupdate', this.onTimeUpdate.bind(this));
+      this.audio.removeEventListener('play', this.onPlay.bind(this));
+      this.audio.removeEventListener('pause', this.onPause.bind(this));
+      this.audio.removeEventListener('ended', this.onEnded.bind(this));
+      this.audio.removeEventListener('canplay', this.onLoad.bind(this));
+      this.audio.removeEventListener('error', this.onError.bind(this));
     },
     /**
      * Audio play event handler. Triggered when audio starts playing.
@@ -535,6 +551,8 @@
      */
     load: function (url) {
       this.reset();
+      this.destroyAudio();
+      this.createAudio();
       this.audio.setAttribute('src', url);
       this.audio.load();
     },
