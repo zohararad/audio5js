@@ -95,4 +95,30 @@ describe('Audio5 Callbacks', function(){
       }
     });
   });
+
+  it('should trigger an event once', function(done){
+    var audio5 = new Audio5js({
+      swf_path: '../swf/audio5js.swf',
+      codecs: ['mp3'],
+      ready: function () {
+        var that = this;
+        this.one('play', function () {
+          that.pause();
+        });
+        this.on('pause', function () {
+          that.play();
+        });
+        this.on('ended', function () {
+          done();
+        });
+
+        this.on('canplay', function () {
+          that.seek(3);
+          that.volume(0);
+          that.play();
+        });
+        this.load('./assets/sample.mp3');
+      }
+    });
+  });
 });

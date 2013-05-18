@@ -86,11 +86,16 @@
      * @param {Object} ctx the context in which the callback should be executed
      */
     on: function (evt, fn, ctx) {
-      if (this.channels === undefined) {
-        this.channels = {};
-      }
-      this.channels[evt] = this.channels[evt] || [];
-      this.channels[evt].push({fn: fn, ctx: ctx});
+      this.subscribe(evt, fn, ctx, false);
+    },
+    /**
+     * Subscribe to a one-time event on a channel
+     * @param {String} evt name of channel / event to subscribe
+     * @param {Function} fn the callback to execute on message publishing
+     * @param {Object} ctx the context in which the callback should be executed
+     */
+    one: function(evt, fn, ctx) {
+      this.subscribe(evt, fn, ctx, true);
     },
     /**
      * Unsubscribe from an event on a channel
@@ -109,19 +114,37 @@
       }
     },
     /**
-     * Publish a message on a channel. Accepts **args after event name
+     * Add event subscription to channel. Called by `on` and `one`
+     * @param {String} evt name of channel / event to subscribe
+     * @param {Function} fn the callback to execute on message publishing
+     * @param {Object} ctx the context in which the callback should be executed
+     * @param {Boolean} once indicate if event should be triggered once or not
+     */
+    subscribe: function (evt, fn, ctx, once) {
+      if (this.channels === undefined) {
+        this.channels = {};
+      }
+      this.channels[evt] = this.channels[evt] || [];
+      this.channels[evt].push({fn: fn, ctx: ctx, once: (once || false)});
+    },
+    /**
+     * Publish a message on a channel. Accepts **args** after event name
      * @param {String} evt name of channel / event to trigger
      */
     trigger: function (evt) {
       if (this.channels && this.channels.hasOwnProperty(evt)) {
         var args = Array.prototype.slice.call(arguments, 1);
-        var i, l;
-        for (i = 0, l = this.channels[evt].length; i < l; i++) {
-          var sub = this.channels[evt][i];
+        var a = [];
+        while(this.channels[evt].length > 0) {
+          var sub = this.channels[evt].shift();
           if (typeof (sub.fn) === 'function') {
             sub.fn.apply(sub.ctx, args);
           }
+          if ( !sub.once ){
+            a.push(sub);
+          }
         }
+        this.channels[evt] = a;
       }
     }
   };
