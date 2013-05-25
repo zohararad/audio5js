@@ -331,6 +331,24 @@
       this.trigger('ready');
     },
     /**
+     * ExternalInterface audio load started callback. Fires when audio starts loading.
+     */
+    eiLoadStart: function(){
+      this.trigger('loadstart');
+    },
+    /**
+     * ExternalInterface audio metadata loaded callback. Fires when audio ID3 tags have been loaded.
+     */
+    eiLoadedMetadata: function(){
+      this.trigger('loadedmetadata');
+    },
+    /**
+     * ExternalInterface audio can play callback. Fires when audio can be played.
+     */
+    eiCanPlay: function () {
+      this.trigger('canplay');
+    },
+    /**
      * ExternalInterface timeupdate callback. Fires as long as playhead position is updated (audio is being played).
      * @param {Float} position audio playback position (sec)
      * @param {Float} duration audio total duration (sec)
@@ -379,10 +397,16 @@
       this.trigger('ended');
     },
     /**
-     * ExternalInterface audio ended callback. Fires when audio playback ended.
+     * ExternalInterface audio seeking callback. Fires when audio is being seeked.
      */
-    eiCanPlay: function () {
-      this.trigger('canplay');
+    eiSeeking: function(){
+      this.trigger('seeking');
+    },
+    /**
+     * ExternalInterface audio seeked callback. Fires when audio has been seeked.
+     */
+    eiSeeked: function(){
+      this.trigger('seeked');
     },
     /**
      * Resets audio position and parameters. Invoked once audio is loaded.
@@ -471,20 +495,51 @@
      * Bind DOM events to Audio object
      */
     bindEvents: function () {
-      this.audio.addEventListener('timeupdate', this.onTimeUpdate.bind(this));
+      this.audio.addEventListener('loadstart', this.onLoadStart.bind(this));
+      this.audio.addEventListener('canplay', this.onLoad.bind(this));
+      this.audio.addEventListener('loadedmetadata', this.onLoadedMetadata.bind(this));
       this.audio.addEventListener('play', this.onPlay.bind(this));
       this.audio.addEventListener('pause', this.onPause.bind(this));
       this.audio.addEventListener('ended', this.onEnded.bind(this));
-      this.audio.addEventListener('canplay', this.onLoad.bind(this));
       this.audio.addEventListener('error', this.onError.bind(this));
+      this.audio.addEventListener('timeupdate', this.onTimeUpdate.bind(this));
+      this.audio.addEventListener('seeking', this.onSeeking.bind(this));
+      this.audio.addEventListener('seeked', this.onSeeked.bind(this));
     },
     unbindEvents: function(){
-      this.audio.removeEventListener('timeupdate', this.onTimeUpdate.bind(this));
+      this.audio.removeEventListener('loadstart', this.onLoadStart.bind(this));
+      this.audio.removeEventListener('canplay', this.onLoad.bind(this));
+      this.audio.removeEventListener('loadedmetadata', this.onLoadedMetadata.bind(this));
       this.audio.removeEventListener('play', this.onPlay.bind(this));
       this.audio.removeEventListener('pause', this.onPause.bind(this));
       this.audio.removeEventListener('ended', this.onEnded.bind(this));
-      this.audio.removeEventListener('canplay', this.onLoad.bind(this));
       this.audio.removeEventListener('error', this.onError.bind(this));
+      this.audio.removeEventListener('timeupdate', this.onTimeUpdate.bind(this));
+      this.audio.removeEventListener('seeking', this.onSeeking.bind(this));
+      this.audio.removeEventListener('seeked', this.onSeeked.bind(this));
+    },
+    /**
+     * Audio load start event handler. Triggered when audio starts loading
+     */
+    onLoadStart: function(){
+      this.trigger('loadstart');
+    },
+    /**
+     * Audio canplay event handler. Triggered when audio is loaded and can be played.
+     * Resets player parameters and starts audio download progress timer.
+     */
+    onLoad: function () {
+      this.seekable = this.audio.seekable && this.audio.seekable.length > 0;
+      if (this.seekable) {
+        this.timer = setInterval(this.onProgress.bind(this), 250);
+      }
+      this.trigger('canplay');
+    },
+    /**
+     * Audio ID3 load event handler. Triggered when ID3 metadata is loaded.
+     */
+    onLoadedMetadata: function(){
+      this.trigger('loadedmetadata');
     },
     /**
      * Audio play event handler. Triggered when audio starts playing.
@@ -518,17 +573,6 @@
       }
     },
     /**
-     * Audio canplay event handler. Triggered when audio is loaded and can be played.
-     * Resets player parameters and starts audio download progress timer.
-     */
-    onLoad: function () {
-      this.seekable = this.audio.seekable && this.audio.seekable.length > 0;
-      if (this.seekable) {
-        this.timer = setInterval(this.onProgress.bind(this), 250);
-      }
-      this.trigger('canplay');
-    },
-    /**
      * Audio download progress timer callback. Check audio's download percentage.
      * Called periodically as soon as the audio loads and can be played.
      * Cancelled when audio has fully download or when a new audio file has been loaded to the player.
@@ -548,6 +592,18 @@
      */
     onError: function (e) {
       this.trigger('error', e);
+    },
+    /**
+     * Audio seeking event handler. Triggered when audio seek starts.
+     */
+    onSeeking: function(){
+      this.trigger('seeking');
+    },
+    /**
+     * Audio seeked event handler. Triggered when audio has been seeked.
+     */
+    onSeeked: function(){
+      this.trigger('seeked');
     },
     /**
      * Clears periodical audio download progress callback.
@@ -725,6 +781,8 @@
      */
     bindAudioEvents: function () {
       this.audio.on('ready', this.onReady, this);
+      this.audio.on('loadstart', this.onLoadStart, this);
+      this.audio.on('loadedmetadata', this.onLoadedMetadata, this);
       this.audio.on('play', this.onPlay, this);
       this.audio.on('pause', this.onPause, this);
       this.audio.on('ended', this.onEnded, this);
@@ -732,6 +790,8 @@
       this.audio.on('timeupdate', this.onTimeUpdate, this);
       this.audio.on('progress', this.onProgress, this);
       this.audio.on('error', this.onError, this);
+      this.audio.on('seeking', this.onSeeking, this);
+      this.audio.on('seeked', this.onSeeked, this);
     },
     /**
      * Load audio from URL
@@ -804,6 +864,18 @@
       this.trigger('ready');
     },
     /**
+     * Audio load start event handler
+     */
+    onLoadStart: function(){
+      this.trigger('loadstart');
+    },
+    /**
+     * Audio metadata loaded event handler
+     */
+    onLoadedMetadata: function(){
+      this.trigger('loadedmetadata');
+    },
+    /**
      * Audio play event handler
      */
     onPlay: function () {
@@ -840,6 +912,18 @@
      */
     onCanPlay: function () {
       this.trigger('canplay');
+    },
+    /**
+     * Audio seeking event handler
+     */
+    onSeeking: function(){
+      this.trigger('seeking');
+    },
+    /**
+     * Audio seeked event handler
+     */
+    onSeeked: function(){
+      this.trigger('seeked');
     },
     /**
      * Playback time update event handler
