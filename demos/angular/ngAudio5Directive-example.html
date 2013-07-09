@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html ng-app="myapp">
+<head>
+  <title></title>
+</head>
+<body ng-controller="PlayCtrl">
+
+  <audio source="source">
+    <!-- model from controller -->
+    <div>source: {{source}}</div>
+  </audio>
+
+<div style="font-size:12px;">
+  Filename : Orb of Envisage.mp3 <br>
+  &copy; Music by Dan-O at <a href="http://www.danosongs.com/">DanoSongs.com</a>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular.min.js"></script>
+<script src="../../src/audio5.js"></script>
+<!--include ngAudio5.js after audio5.js-->
+<script src="ngAudio5.js"></script>
+<script src="ngAudio5Directive.js"></script>
+
+<script>
+  //inject Audio5 service into our app
+  var app = angular.module('myapp',['Audio5']);
+
+  //Inject the AudioService singleton
+  var PlayCtrl = function ($scope, AudioService) {
+    $scope.source = "http://danosongs.com/music/danosongs.com-orb-of-envisage.mp3";
+  }
+</script>
+</body>
+</html>
