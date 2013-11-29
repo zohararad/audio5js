@@ -6,8 +6,25 @@ describe('Audio5 Callbacks', function(){
       swf_path: '../swf/audio5js.swf',
       codecs: ['mp3'],
       ready: function () {
+        var that = this;
         this.on('canplay', function () {
           done();
+          that.pause();
+        });
+        this.load('./assets/sample.mp3');
+      }
+    });
+  });
+
+  it('should trigger loadstart event', function(done){
+    var audio5 = new Audio5js({
+      swf_path: '../swf/audio5js.swf',
+      codecs: ['mp3'],
+      ready: function () {
+        var that = this;
+        this.on('loadstart', function () {
+          done();
+          that.pause();
         });
         this.load('./assets/sample.mp3');
       }
@@ -95,4 +112,81 @@ describe('Audio5 Callbacks', function(){
       }
     });
   });
+
+  it('should trigger an event once', function(done){
+    var audio5 = new Audio5js({
+      swf_path: '../swf/audio5js.swf',
+      codecs: ['mp3'],
+      ready: function () {
+        var that = this;
+        this.one('play', function () {
+          that.pause();
+        });
+        this.on('pause', function () {
+          that.play();
+        });
+        this.on('ended', function () {
+          done();
+        });
+
+        this.on('canplay', function () {
+          that.seek(3);
+          that.volume(0);
+          that.play();
+        });
+        this.load('./assets/sample.mp3');
+      }
+    });
+  });
+
+  it('should trigger seeking event', function(done){
+    var audio5 = new Audio5js({
+      swf_path: '../swf/audio5js.swf',
+      codecs: ['mp3'],
+      ready: function () {
+        var that = this;
+        this.on('seeking', function () {
+          done();
+        });
+        this.on('canplay', function () {
+          that.pause();
+          that.seek(4);
+        });
+        this.load('./assets/sample.mp3');
+      }
+    });
+  });
+
+  it('should trigger seeked event', function(done){
+    var audio5 = new Audio5js({
+      swf_path: '../swf/audio5js.swf',
+      codecs: ['mp3'],
+      ready: function () {
+        var that = this;
+        this.on('seeked', function () {
+          done();
+        });
+        this.on('canplay', function () {
+          that.pause();
+          that.seek(4);
+        });
+        this.load('./assets/sample.mp3');
+      }
+    });
+  });
+
+  it('should load metadata', function(done){
+    var audio5 = new Audio5js({
+      swf_path: '../swf/audio5js.swf',
+      codecs: ['mp3'],
+      ready: function () {
+        var that = this;
+        this.on('loadedmetadata', function () {
+          done();
+        });
+        this.load('./assets/sample.mp3');
+      }
+    });
+  });
+
 });
