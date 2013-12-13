@@ -153,19 +153,19 @@
     /**
      * Flash embed code string with cross-browser support.
      */
-    flash_embed_code: (function () {
+	flash_embed_code: function (id, swf_location, ts) {
       var prefix;
-      var s = '<param name="movie" value="$2?playerInstance=window.' + ns + '_flash.instances[\'$1\']&datetime=$3"/>' +
+      var s = '<param name="movie" value="' + swf_location + '?playerInstance=window.' + ns + '_flash.instances["' + id + '"]&datetime=' + ts + '/>' +
         '<param name="wmode" value="transparent"/>' +
         '<param name="allowscriptaccess" value="always" />' +
         '</object>';
       if (ActiveXObject) {
-        prefix = '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="1" height="1" id="$1">';
+        prefix = '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="1" height="1" id="' + id + '">';
       } else {
-        prefix = '<object type="application/x-shockwave-flash" data="$2?playerInstance=window.' + ns + '_flash.instances[\'$1\']&datetime=$3" width="1" height="1" id="$1" >';
+        prefix = '<object type="application/x-shockwave-flash" data="' + swf_location + '?playerInstance=window.' + ns + '_flash.instances["' + id + '"]&datetime=' + ts + '" width="1" height="1" id="' + id + '" >';
       }
       return prefix + s;
-    }()),
+    },
     /**
      * Check if browser supports audio mime type.
      * @param {String} mime_type audio mime type to check
@@ -232,7 +232,7 @@
       document.body.appendChild(d);
       if(typeof($win.swfobject) === 'object'){
         var fv = {
-          playerInstance: 'window.'+ ns + '_flash.instances["'+id+'"]'
+          playerInstance: 'window.'+ ns + '_flash.instances[\''+id+'\']'
         };
         var params = {
           allowscriptaccess: 'always',
@@ -241,10 +241,8 @@
         d.innerHTML = '<div id="'+id+'"></div>';
         swfobject.embedSWF(swf_location + '?ts='+(new Date().getTime() + Math.random()), id, "1", "1", "9.0.0", null, fv, params);
       } else {
-        var flashSource = this.flash_embed_code.replace(/\$1/g, id);
-        flashSource = flashSource.replace(/\$2/g, swf_location);
-        flashSource = flashSource.replace(/\$3/g, (new Date().getTime() + Math.random())); // Ensure swf is not pulled from cache
-        d.innerHTML = flashSource;
+        var ts = new Date().getTime() + Math.random(); // Ensure swf is not pulled from cache
+        d.innerHTML = this.flash_embed_code(id, swf_location, ts);
       }
       return document.getElementById(id);
     },
