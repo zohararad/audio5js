@@ -13,7 +13,7 @@ describe('Audio5 Object', function(){
       codecs: ['mp4', 'mp3'],
       ready: function (o) {
         player = o;
-        this.should.be.an('object');
+        expect(this).to.be.an('object');
         done();
       }
     });
@@ -21,9 +21,9 @@ describe('Audio5 Object', function(){
 
   it('should use the specified codec', function(){
     if (Audio5js.can_play('mp4')){
-      player.codec.should.eql('mp4');
+      expect(player.codec).to.be.equal('mp4');
     } else { //fallback is mp3
-      player.codec.should.eql('mp3');
+      expect(player.codec).to.be.equal('mp3');
     }
   });
 });

@@ -4,9 +4,9 @@
  * License MIT (c) Zohar Arad 2013
  */
 (function ($win, ns, factory) {
+  "use strict";
   /*global define */
   /*global swfobject */
-  "use strict";
 
   if (typeof (module) !== 'undefined' && module.exports) { // CommonJS
     module.exports = factory(ns, $win);
@@ -153,19 +153,19 @@
     /**
      * Flash embed code string with cross-browser support.
      */
-    flash_embed_code: (function () {
+	flash_embed_code: function (id, swf_location, ts) {
       var prefix;
-      var s = '<param name="movie" value="$2?playerInstance=window.' + ns + '_flash.instances[\'$1\']&datetime=$3"/>' +
+      var s = '<param name="movie" value="' + swf_location + '?playerInstance=window.' + ns + '_flash.instances["' + id + '"]&datetime=' + ts + '/>' +
         '<param name="wmode" value="transparent"/>' +
         '<param name="allowscriptaccess" value="always" />' +
         '</object>';
       if (ActiveXObject) {
-        prefix = '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="1" height="1" id="$1">';
+        prefix = '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="1" height="1" id="' + id + '">';
       } else {
-        prefix = '<object type="application/x-shockwave-flash" data="$2?playerInstance=window.' + ns + '_flash.instances[\'$1\']&datetime=$3" width="1" height="1" id="$1" >';
+        prefix = '<object type="application/x-shockwave-flash" data="' + swf_location + '?playerInstance=window.' + ns + '_flash.instances["' + id + '"]&datetime=' + ts + '" width="1" height="1" id="' + id + '" >';
       }
       return prefix + s;
-    }()),
+    },
     /**
      * Check if browser supports audio mime type.
      * @param {String} mime_type audio mime type to check
@@ -232,7 +232,7 @@
       document.body.appendChild(d);
       if(typeof($win.swfobject) === 'object'){
         var fv = {
-          playerInstance: 'window.'+ ns + '_flash.instances["'+id+'"]'
+          playerInstance: 'window.'+ ns + '_flash.instances[\''+id+'\']'
         };
         var params = {
           allowscriptaccess: 'always',
@@ -241,10 +241,8 @@
         d.innerHTML = '<div id="'+id+'"></div>';
         swfobject.embedSWF(swf_location + '?ts='+(new Date().getTime() + Math.random()), id, "1", "1", "9.0.0", null, fv, params);
       } else {
-        var flashSource = this.flash_embed_code.replace(/\$1/g, id);
-        flashSource = flashSource.replace(/\$2/g, swf_location);
-        flashSource = flashSource.replace(/\$3/g, (new Date().getTime() + Math.random())); // Ensure swf is not pulled from cache
-        d.innerHTML = flashSource;
+        var ts = new Date().getTime() + Math.random(); // Ensure swf is not pulled from cache
+        d.innerHTML = this.flash_embed_code(id, swf_location, ts);
       }
       return document.getElementById(id);
     },
@@ -281,7 +279,7 @@
     duration: 0, /** {Float} audio duration (sec) */
     position: 0, /** {Float} audio position (sec) */
     load_percent: 0, /** {Float} audio file load percent (%) */
-    seekable: null, /** {Boolean} is loaded audio seekable */
+    seekable: false, /** {Boolean} is loaded audio seekable */
     ready: null /** {Boolean} is loaded audio seekable */
   };
 
@@ -478,6 +476,9 @@
     init: function () {
       this.trigger('ready');
     },
+    /**
+     * Create new audio instance
+     */
     createAudio: function(){
       this.audio = new Audio();
       this.audio.autoplay = false;
@@ -485,6 +486,9 @@
       this.audio.autobuffer = true;
       this.bindEvents();
     },
+    /**
+     * Destroy current audio instance
+     */
     destroyAudio: function(){
       if(this.audio){
         this.unbindEvents();
@@ -495,17 +499,20 @@
      * Bind DOM events to Audio object
      */
     bindEvents: function () {
-      this.audio.addEventListener('loadstart', this.onLoadStart.bind(this));
-      this.audio.addEventListener('canplay', this.onLoad.bind(this));
-      this.audio.addEventListener('loadedmetadata', this.onLoadedMetadata.bind(this));
-      this.audio.addEventListener('play', this.onPlay.bind(this));
-      this.audio.addEventListener('pause', this.onPause.bind(this));
-      this.audio.addEventListener('ended', this.onEnded.bind(this));
-      this.audio.addEventListener('error', this.onError.bind(this));
-      this.audio.addEventListener('timeupdate', this.onTimeUpdate.bind(this));
-      this.audio.addEventListener('seeking', this.onSeeking.bind(this));
-      this.audio.addEventListener('seeked', this.onSeeked.bind(this));
+      this.audio.addEventListener('loadstart', this.onLoadStart.bind(this), false);
+      this.audio.addEventListener('canplay', this.onLoad.bind(this), false);
+      this.audio.addEventListener('loadedmetadata', this.onLoadedMetadata.bind(this), false);
+      this.audio.addEventListener('play', this.onPlay.bind(this), false);
+      this.audio.addEventListener('pause', this.onPause.bind(this), false);
+      this.audio.addEventListener('ended', this.onEnded.bind(this), false);
+      this.audio.addEventListener('error', this.onError.bind(this), false);
+      this.audio.addEventListener('timeupdate', this.onTimeUpdate.bind(this), false);
+      this.audio.addEventListener('seeking', this.onSeeking.bind(this), false);
+      this.audio.addEventListener('seeked', this.onSeeked.bind(this), false);
     },
+    /**
+     * Unbind DOM events from Audio object
+     */
     unbindEvents: function(){
       this.audio.removeEventListener('loadstart', this.onLoadStart.bind(this));
       this.audio.removeEventListener('canplay', this.onLoad.bind(this));

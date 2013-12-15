@@ -68,12 +68,15 @@ describe('Audio5 Callbacks', function(){
       codecs: ['mp3'],
       ready: function () {
         var that = this;
+        this.on('play', function () {
+          that.pause();
+        });
+
         this.on('pause', function () {
           done();
         });
         this.load('./assets/sample.mp3');
-        this.play();
-        that.pause();
+        that.play();
       }
     });
   });

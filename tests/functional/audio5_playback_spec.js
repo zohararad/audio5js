@@ -36,7 +36,7 @@ describe('Audio5 Playback', function(){
         this.on('timeupdate', function () {
           that.pause();
           var d = Math.round(that.duration);
-          d.should.eql(4);
+          expect(d).to.be.equal(4);
           done();
         });
 
@@ -55,7 +55,7 @@ describe('Audio5 Playback', function(){
 
         this.on('canplay', function () {
           that.pause();
-          that.seekable.should.eql(true);
+          expect(that.audio.seekable).to.be.equal(true);
           done();
         });
 
@@ -74,7 +74,7 @@ describe('Audio5 Playback', function(){
         this.on('canplay', function () {
           that.pause();
           that.seek(4);
-          that.position.should.eql(4);
+          expect(that.position).to.be.equal(4);
           done();
         });
 
@@ -93,7 +93,7 @@ describe('Audio5 Playback', function(){
         this.on('play', function () {
           that.pause();
           that.volume(0);
-          that.volume().should.eql(0);
+          expect(that.volume()).to.be.equal(0);
           done();
         });
 
