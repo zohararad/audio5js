@@ -4,9 +4,9 @@
  * License MIT (c) Zohar Arad 2013
  */
 (function ($win, ns, factory) {
+  "use strict";
   /*global define */
   /*global swfobject */
-  "use strict";
 
   if (typeof (module) !== 'undefined' && module.exports) { // CommonJS
     module.exports = factory(ns, $win);
@@ -279,7 +279,7 @@
     duration: 0, /** {Float} audio duration (sec) */
     position: 0, /** {Float} audio position (sec) */
     load_percent: 0, /** {Float} audio file load percent (%) */
-    seekable: null, /** {Boolean} is loaded audio seekable */
+    seekable: false, /** {Boolean} is loaded audio seekable */
     ready: null /** {Boolean} is loaded audio seekable */
   };
 
@@ -476,6 +476,9 @@
     init: function () {
       this.trigger('ready');
     },
+    /**
+     * Create new audio instance
+     */
     createAudio: function(){
       this.audio = new Audio();
       this.audio.autoplay = false;
@@ -483,6 +486,9 @@
       this.audio.autobuffer = true;
       this.bindEvents();
     },
+    /**
+     * Destroy current audio instance
+     */
     destroyAudio: function(){
       if(this.audio){
         this.unbindEvents();
@@ -493,17 +499,20 @@
      * Bind DOM events to Audio object
      */
     bindEvents: function () {
-      this.audio.addEventListener('loadstart', this.onLoadStart.bind(this));
-      this.audio.addEventListener('canplay', this.onLoad.bind(this));
-      this.audio.addEventListener('loadedmetadata', this.onLoadedMetadata.bind(this));
-      this.audio.addEventListener('play', this.onPlay.bind(this));
-      this.audio.addEventListener('pause', this.onPause.bind(this));
-      this.audio.addEventListener('ended', this.onEnded.bind(this));
-      this.audio.addEventListener('error', this.onError.bind(this));
-      this.audio.addEventListener('timeupdate', this.onTimeUpdate.bind(this));
-      this.audio.addEventListener('seeking', this.onSeeking.bind(this));
-      this.audio.addEventListener('seeked', this.onSeeked.bind(this));
+      this.audio.addEventListener('loadstart', this.onLoadStart.bind(this), false);
+      this.audio.addEventListener('canplay', this.onLoad.bind(this), false);
+      this.audio.addEventListener('loadedmetadata', this.onLoadedMetadata.bind(this), false);
+      this.audio.addEventListener('play', this.onPlay.bind(this), false);
+      this.audio.addEventListener('pause', this.onPause.bind(this), false);
+      this.audio.addEventListener('ended', this.onEnded.bind(this), false);
+      this.audio.addEventListener('error', this.onError.bind(this), false);
+      this.audio.addEventListener('timeupdate', this.onTimeUpdate.bind(this), false);
+      this.audio.addEventListener('seeking', this.onSeeking.bind(this), false);
+      this.audio.addEventListener('seeked', this.onSeeked.bind(this), false);
     },
+    /**
+     * Unbind DOM events from Audio object
+     */
     unbindEvents: function(){
       this.audio.removeEventListener('loadstart', this.onLoadStart.bind(this));
       this.audio.removeEventListener('canplay', this.onLoad.bind(this));
