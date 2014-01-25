@@ -155,14 +155,14 @@
      */
 	flash_embed_code: function (id, swf_location, ts) {
       var prefix;
-      var s = '<param name="movie" value="' + swf_location + '?playerInstance=window.' + ns + '_flash.instances["' + id + '"]&datetime=' + ts + '/>' +
+      var s = '<param name="movie" value="' + swf_location + '?playerInstance=window.' + ns + '_flash.instances[\'' + id + '\']&datetime=' + ts + '/>' +
         '<param name="wmode" value="transparent"/>' +
         '<param name="allowscriptaccess" value="always" />' +
         '</object>';
       if (ActiveXObject) {
         prefix = '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="1" height="1" id="' + id + '">';
       } else {
-        prefix = '<object type="application/x-shockwave-flash" data="' + swf_location + '?playerInstance=window.' + ns + '_flash.instances["' + id + '"]&datetime=' + ts + '" width="1" height="1" id="' + id + '" >';
+        prefix = '<object type="application/x-shockwave-flash" data="' + swf_location + '?playerInstance=window.' + ns + '_flash.instances[\'' + id + '\']&datetime=' + ts + '" width="1" height="1" id="' + id + '" >';
       }
       return prefix + s;
     },
