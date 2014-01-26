@@ -805,13 +805,14 @@
      * @param {String} url URL of audio to load
      */
     load: function (url) {
-      var f = function(u){
-        this.audio.load(u);
-        this.trigger('load');
-      }.bind(this, url);
+      var that = this,
+          f = function(u){
+            that.audio.load(u);
+            that.trigger('load');
+          };
 
       if(this.ready){
-        f();
+        f(url);
       } else {
         this.on('ready', f);
       }
