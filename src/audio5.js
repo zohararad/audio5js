@@ -391,7 +391,7 @@
      * ExternalInterface audio ended callback. Fires when audio playback ended.
      */
     eiEnded: function () {
-      this.playing = false;
+      this.pause();
       this.trigger('ended');
     },
     /**
