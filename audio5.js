@@ -391,7 +391,7 @@
      * ExternalInterface audio ended callback. Fires when audio playback ended.
      */
     eiEnded: function () {
-      this.playing = false;
+      this.pause();
       this.trigger('ended');
     },
     /**
@@ -536,6 +536,9 @@
      * Resets player parameters and starts audio download progress timer.
      */
     onLoad: function () {
+      if(!this.audio){
+        return setTimeout(this.onLoad.bind(this), 100);
+      }
       this.seekable = this.audio.seekable && this.audio.seekable.length > 0;
       if (this.seekable) {
         this.timer = setInterval(this.onProgress.bind(this), 250);
@@ -573,7 +576,7 @@
      * Audio timeupdate event handler. Triggered as long as playhead position is updated (audio is being played).
      */
     onTimeUpdate: function () {
-      if (this.audio.buffered !== null && this.audio.buffered.length && this.playing) {
+      if (this.audio && this.audio.buffered !== null && this.audio.buffered.length && this.playing) {
         this.position = this.audio.currentTime;
         this.duration = this.audio.duration === Infinity ? null : this.audio.duration;
         this.trigger('timeupdate', this.position, this.duration);
@@ -585,7 +588,7 @@
      * Cancelled when audio has fully download or when a new audio file has been loaded to the player.
      */
     onProgress: function () {
-      if (this.audio.buffered !== null && this.audio.buffered.length) {
+      if (this.audio && this.audio.buffered !== null && this.audio.buffered.length) {
         this.load_percent = parseInt(((this.audio.buffered.end(this.audio.buffered.length - 1) / this.audio.duration) * 100), 10);
         this.trigger('progress', this.load_percent);
         if (this.load_percent >= 100) {
