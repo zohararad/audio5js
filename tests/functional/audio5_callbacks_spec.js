@@ -53,8 +53,10 @@ describe('Audio5 Callbacks', function(){
       ready: function () {
         var that = this;
         this.on('play', function () {
-          that.pause();
-          done();
+          setTimeout(function(){
+            that.pause();
+            done();
+          }, 400);
         });
         this.load('./assets/sample.mp3');
         this.play();
@@ -69,7 +71,9 @@ describe('Audio5 Callbacks', function(){
       ready: function () {
         var that = this;
         this.on('play', function () {
-          that.pause();
+          setTimeout(function(){
+            that.pause();
+          }, 500);
         });
 
         this.on('pause', function () {
