@@ -197,6 +197,8 @@
       if (mime_str === undefined) {
         throw new Error('Unspecified Audio Mime Type');
       } else {
+        if (mime_type == 'mp3' && navigator.userAgent.match(/Android/i) && navigator.userAgent.match(/Firefox/i))
+          return true;
         return !!a.canPlayType && a.canPlayType(mime_str) !== '';
       }
     },
