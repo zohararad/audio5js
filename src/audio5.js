@@ -175,32 +175,32 @@
       var a = document.createElement('audio');
       var mime_str;
       switch (mime_type) {
-      case 'mp3':
-        mime_str = 'audio/mpeg; codecs="mp3"';
-        break;
-      case 'vorbis':
-        mime_str = 'audio/ogg; codecs="vorbis"';
-        break;
-      case 'opus':
-        mime_str = 'audio/ogg; codecs="opus"';
-        break;
-      case 'webm':
-        mime_str = 'audio/webm; codecs="vorbis"';
-        break;
-      case 'mp4':
-        mime_str = 'audio/mp4; codecs="mp4a.40.5"';
-        break;
-      case 'wav':
-        mime_str = 'audio/wav; codecs="1"';
-        break;
+        case 'mp3':
+          mime_str = 'audio/mpeg; codecs="mp3"';
+          break;
+        case 'vorbis':
+          mime_str = 'audio/ogg; codecs="vorbis"';
+          break;
+        case 'opus':
+          mime_str = 'audio/ogg; codecs="opus"';
+          break;
+        case 'webm':
+          mime_str = 'audio/webm; codecs="vorbis"';
+          break;
+        case 'mp4':
+          mime_str = 'audio/mp4; codecs="mp4a.40.5"';
+          break;
+        case 'wav':
+          mime_str = 'audio/wav; codecs="1"';
+          break;
       }
-      if (mime_str === undefined) {
-        throw new Error('Unspecified Audio Mime Type');
-      } else {
-        if (mime_type == 'mp3' && navigator.userAgent.match(/Android/i) && navigator.userAgent.match(/Firefox/i))
+      if (mime_str !== undefined) {
+        if (mime_type === 'mp3' && navigator.userAgent.match(/Android/i) && navigator.userAgent.match(/Firefox/i)) {
           return true;
+        }
         return !!a.canPlayType && a.canPlayType(mime_str) !== '';
       }
+      return false;
     },
     /**
      * Boolean flag indicating whether the browser has Flash installed or not
