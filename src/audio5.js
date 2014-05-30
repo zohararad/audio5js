@@ -578,9 +578,11 @@
      * Audio timeupdate event handler. Triggered as long as playhead position is updated (audio is being played).
      */
     onTimeUpdate: function () {
-      if (this.audio && this.audio.buffered !== null && this.audio.buffered.length && this.playing) {
-        this.position = this.audio.currentTime;
-        this.duration = this.audio.duration === Infinity ? null : this.audio.duration;
+      if (this.audio && this.playing) {
+        try{
+          this.position = this.audio.currentTime;
+          this.duration = this.audio.duration === Infinity ? null : this.audio.duration;
+        } catch (e){}
         this.trigger('timeupdate', this.position, this.duration);
       }
     },
