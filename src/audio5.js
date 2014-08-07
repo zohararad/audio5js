@@ -176,7 +176,7 @@
       var mime_str;
       switch (mime_type) {
         case 'mp3':
-          mime_str = 'audio/mpeg;';
+          mime_str = 'audio/mpeg; codecs="mp3"';
           break;
         case 'vorbis':
           mime_str = 'audio/ogg; codecs="vorbis"';
