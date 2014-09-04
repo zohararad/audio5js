@@ -153,7 +153,7 @@
     /**
      * Flash embed code string with cross-browser support.
      */
-	flash_embed_code: function (id, swf_location, ts) {
+  flash_embed_code: function (id, swf_location, ts) {
       var prefix;
       var s = '<param name="movie" value="' + swf_location + '?playerInstance=window.' + ns + '_flash.instances[\'' + id + '\']&datetime=' + ts + '"/>' +
         '<param name="wmode" value="transparent"/>' +
