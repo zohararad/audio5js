@@ -363,9 +363,13 @@
     /**
      * ExternalInterface download progress callback. Fires as long as audio file is downloaded by browser.
      * @param {Float} percent audio download percent
+     * @param {Float} duration audio total duration (sec)
+     * * @param {Boolean} seekable is audio seekable or not (download or streaming)
      */
-    eiProgress: function (percent) {
+    eiProgress: function (percent, duration, seekable) {
       this.load_percent = percent;
+      this.duration = duration;
+      this.seekable = seekable;
       this.trigger('progress', percent);
     },
     /**
