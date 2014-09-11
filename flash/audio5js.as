@@ -150,7 +150,7 @@ package {
 			if (loadPercent > 1) loadPercent = 1;
 			if (!this.seekable) loadPercent = 0;
 			if (loadPercent >= 0 && this.seekable) {
-				ExternalInterface.call(this.playerInstance+'eiProgress', loadPercent * 100);
+				ExternalInterface.call(this.playerInstance+'eiProgress', loadPercent * 100, this.duration / 1000, this.seekable);
 			}
 		}
 
