@@ -597,7 +597,8 @@
      */
     onProgress: function () {
       if (this.audio && this.audio.buffered !== null && this.audio.buffered.length) {
-        this.load_percent = parseInt(((this.audio.buffered.end(this.audio.buffered.length - 1) / this.audio.duration) * 100), 10);
+        this.duration = this.audio.duration === Infinity ? null : this.audio.duration;
+        this.load_percent = parseInt(((this.audio.buffered.end(this.audio.buffered.length - 1) / this.duration) * 100), 10);
         this.trigger('progress', this.load_percent);
         if (this.load_percent >= 100) {
           this.clearLoadProgress();
@@ -961,6 +962,7 @@
      * @param {Float} loaded audio download percent
      */
     onProgress: function (loaded) {
+      this.duration = this.audio.duration;
       this.load_percent = loaded;
       this.trigger('progress', loaded);
     }
