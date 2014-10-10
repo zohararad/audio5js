@@ -153,7 +153,7 @@
     /**
      * Flash embed code string with cross-browser support.
      */
-	flash_embed_code: function (id, swf_location, ts) {
+  flash_embed_code: function (id, swf_location, ts) {
       var prefix;
       var s = '<param name="movie" value="' + swf_location + '?playerInstance=window.' + ns + '_flash.instances[\'' + id + '\']&datetime=' + ts + '"/>' +
         '<param name="wmode" value="transparent"/>' +
@@ -363,9 +363,13 @@
     /**
      * ExternalInterface download progress callback. Fires as long as audio file is downloaded by browser.
      * @param {Float} percent audio download percent
+     * @param {Float} duration audio total duration (sec)
+     * * @param {Boolean} seekable is audio seekable or not (download or streaming)
      */
-    eiProgress: function (percent) {
+    eiProgress: function (percent, duration, seekable) {
       this.load_percent = percent;
+      this.duration = duration;
+      this.seekable = seekable;
       this.trigger('progress', percent);
     },
     /**
@@ -459,6 +463,17 @@
         this.audio.seekTo(position);
         this.position = position;
       } catch (e) {}
+    },
+    /**
+     * Destroy audio object and remove from DOM
+     */
+    destroyAudio: function() {
+      if(this.audio){
+        this.pause();
+        this.audio.parentNode.removeChild(this.audio);
+        delete globalAudio5Flash.instances[this.id];
+        delete this.audio;
+      }
     }
   };
 
@@ -493,7 +508,9 @@
      */
     destroyAudio: function(){
       if(this.audio){
+        this.pause();
         this.unbindEvents();
+        this.audio.removeAttribute('src');
         delete this.audio;
       }
     },
@@ -593,7 +610,8 @@
      */
     onProgress: function () {
       if (this.audio && this.audio.buffered !== null && this.audio.buffered.length) {
-        this.load_percent = parseInt(((this.audio.buffered.end(this.audio.buffered.length - 1) / this.audio.duration) * 100), 10);
+        this.duration = this.audio.duration === Infinity ? null : this.audio.duration;
+        this.load_percent = parseInt(((this.audio.buffered.end(this.audio.buffered.length - 1) / this.duration) * 100), 10);
         this.trigger('progress', this.load_percent);
         if (this.load_percent >= 100) {
           this.clearLoadProgress();
@@ -766,27 +784,35 @@
      * @return {FlashAudioPlayer,HTML5AudioPlayer} audio player instance
      */
     getPlayer: function () {
-      var i, l, player;
-      for (i = 0, l = this.settings.codecs.length; i < l; i++) {
-        var codec = this.settings.codecs[i];
-        if (Audio5js.can_play(codec)) {
-          player = new HTML5AudioPlayer();
-          this.settings.use_flash = false;
-          this.settings.player = {
-            engine: 'html',
-            codec: codec
-          };
-          break;
-        }
-      }
-      if (player === undefined) {
-        // here we double check for mp3 support instead of defaulting to Flash in case user overrode the settings.codecs array with an empty array.
-        this.settings.use_flash = !Audio5js.can_play('mp3');
-        player = this.settings.use_flash ? new FlashAudioPlayer() : new HTML5AudioPlayer();
+      var i, l, player, codec;
+      if(this.settings.use_flash){
+        player = new FlashAudioPlayer();
         this.settings.player = {
-          engine: (this.settings.use_flash ? 'flash' : 'html'),
+          engine: 'flash',
           codec: 'mp3'
         };
+      } else {
+        for (i = 0, l = this.settings.codecs.length; i < l; i++) {
+          codec = this.settings.codecs[i];
+          if (Audio5js.can_play(codec)) {
+            player = new HTML5AudioPlayer();
+            this.settings.use_flash = false;
+            this.settings.player = {
+              engine: 'html',
+              codec: codec
+            };
+            break;
+          }
+        }
+        if (player === undefined) {
+          // here we double check for mp3 support instead of defaulting to Flash in case user overrode the settings.codecs array with an empty array.
+          this.settings.use_flash = !Audio5js.can_play('mp3');
+          player = this.settings.use_flash ? new FlashAudioPlayer() : new HTML5AudioPlayer();
+          this.settings.player = {
+            engine: (this.settings.use_flash ? 'flash' : 'html'),
+            codec: 'mp3'
+          };
+        }
       }
       return player;
     },
@@ -866,6 +892,12 @@
     seek: function (position) {
       this.audio.seek(position);
       this.position = position;
+    },
+    /**
+     * Destroy audio object and remove from DOM
+     */
+    destroy: function() {
+      this.audio.destroyAudio();
     },
     /**
      * Callback for audio ready event. Indicates audio is ready for playback.
@@ -957,6 +989,7 @@
      * @param {Float} loaded audio download percent
      */
     onProgress: function (loaded) {
+      this.duration = this.audio.duration;
       this.load_percent = loaded;
       this.trigger('progress', loaded);
     }
