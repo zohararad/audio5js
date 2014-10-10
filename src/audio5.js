@@ -779,27 +779,35 @@
      * @return {FlashAudioPlayer,HTML5AudioPlayer} audio player instance
      */
     getPlayer: function () {
-      var i, l, player;
-      for (i = 0, l = this.settings.codecs.length; i < l; i++) {
-        var codec = this.settings.codecs[i];
-        if (Audio5js.can_play(codec)) {
-          player = new HTML5AudioPlayer();
-          this.settings.use_flash = false;
-          this.settings.player = {
-            engine: 'html',
-            codec: codec
-          };
-          break;
-        }
-      }
-      if (player === undefined) {
-        // here we double check for mp3 support instead of defaulting to Flash in case user overrode the settings.codecs array with an empty array.
-        this.settings.use_flash = !Audio5js.can_play('mp3');
-        player = this.settings.use_flash ? new FlashAudioPlayer() : new HTML5AudioPlayer();
+      var i, l, player, codec;
+      if(this.settings.use_flash){
+        player = new FlashAudioPlayer();
         this.settings.player = {
-          engine: (this.settings.use_flash ? 'flash' : 'html'),
+          engine: 'flash',
           codec: 'mp3'
         };
+      } else {
+        for (i = 0, l = this.settings.codecs.length; i < l; i++) {
+          codec = this.settings.codecs[i];
+          if (Audio5js.can_play(codec)) {
+            player = new HTML5AudioPlayer();
+            this.settings.use_flash = false;
+            this.settings.player = {
+              engine: 'html',
+              codec: codec
+            };
+            break;
+          }
+        }
+        if (player === undefined) {
+          // here we double check for mp3 support instead of defaulting to Flash in case user overrode the settings.codecs array with an empty array.
+          this.settings.use_flash = !Audio5js.can_play('mp3');
+          player = this.settings.use_flash ? new FlashAudioPlayer() : new HTML5AudioPlayer();
+          this.settings.player = {
+            engine: (this.settings.use_flash ? 'flash' : 'html'),
+            codec: 'mp3'
+          };
+        }
       }
       return player;
     },
