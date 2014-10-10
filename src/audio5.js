@@ -459,6 +459,17 @@
         this.audio.seekTo(position);
         this.position = position;
       } catch (e) {}
+    },
+    /**
+     * Destroy audio object and remove from DOM
+     */
+    destroyAudio: function() {
+      if(this.audio){
+        this.pause();
+        this.audio.parentNode.removeChild(this.audio);
+        delete globalAudio5Flash.instances[this.id];
+        delete this.audio;
+      }
     }
   };
 
@@ -493,7 +504,9 @@
      */
     destroyAudio: function(){
       if(this.audio){
+        this.pause();
         this.unbindEvents();
+        this.audio.removeAttribute('src');
         delete this.audio;
       }
     },
@@ -866,6 +879,12 @@
     seek: function (position) {
       this.audio.seek(position);
       this.position = position;
+    },
+    /**
+     * Destroy audio object and remove from DOM
+     */
+    destroy: function() {
+      this.audio.destroyAudio();
     },
     /**
      * Callback for audio ready event. Indicates audio is ready for playback.

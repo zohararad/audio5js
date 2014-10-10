@@ -26,4 +26,21 @@ describe('Audio5 Object', function(){
       expect(player.codec).to.be.equal('mp3');
     }
   });
+
+  it('should destroy audio', function(done) {
+    audio5 = new Audio5js({
+      swf_path: '../swf/audio5js.swf',
+      codecs: ['mp4', 'mp3'],
+      ready: function (o) {
+        var that = this;
+        this.on('canplay', function () {
+          that.destroy();
+          expect(that.audio.audio).to.be.undefined;
+          done();
+        });
+        this.load('./assets/sample.mp3');
+      }
+    });
+  });
+
 });
