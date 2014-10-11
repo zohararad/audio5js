@@ -510,7 +510,7 @@
       if(this.audio){
         this.pause();
         this.unbindEvents();
-        this.audio.removeAttribute('src');
+        this.audio.setAttribute('src', '');
         delete this.audio;
       }
     },
