@@ -510,8 +510,11 @@
       if(this.audio){
         this.pause();
         this.unbindEvents();
-        this.audio.setAttribute('src', '');
-        delete this.audio;
+        try {
+          this.audio.setAttribute('src', '');
+        } finally {
+          delete this.audio;
+        }
       }
     },
     /**
