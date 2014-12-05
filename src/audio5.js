@@ -492,6 +492,17 @@
      */
     init: function () {
       this.trigger('ready');
+
+      this.handleLoadStart = this.onLoadStart.bind(this);
+      this.handleCanPlay = this.onLoad.bind(this);
+      this.handleLoadedmetadata = this.onLoadedMetadata.bind(this);
+      this.handlePlay = this.onPlay.bind(this);
+      this.handlePause = this.onPause.bind(this);
+      this.handleEnded = this.onEnded.bind(this);
+      this.handleError = this.onError.bind(this);
+      this.handleTimeUpdate = this.onTimeUpdate.bind(this);
+      this.handleSeeking = this.onSeeking.bind(this);
+      this.handleSeeked = this.onSeeked.bind(this);
     },
     /**
      * Create new audio instance
@@ -517,32 +528,32 @@
     /**
      * Bind DOM events to Audio object
      */
-    bindEvents: function () {
-      this.audio.addEventListener('loadstart', this.onLoadStart.bind(this), false);
-      this.audio.addEventListener('canplay', this.onLoad.bind(this), false);
-      this.audio.addEventListener('loadedmetadata', this.onLoadedMetadata.bind(this), false);
-      this.audio.addEventListener('play', this.onPlay.bind(this), false);
-      this.audio.addEventListener('pause', this.onPause.bind(this), false);
-      this.audio.addEventListener('ended', this.onEnded.bind(this), false);
-      this.audio.addEventListener('error', this.onError.bind(this), false);
-      this.audio.addEventListener('timeupdate', this.onTimeUpdate.bind(this), false);
-      this.audio.addEventListener('seeking', this.onSeeking.bind(this), false);
-      this.audio.addEventListener('seeked', this.onSeeked.bind(this), false);
+    bindEvents: function() {
+      this.audio.addEventListener('loadstart', this.handleLoadStart, false);
+      this.audio.addEventListener('canplay', this.handleCanPlay, false);
+      this.audio.addEventListener('loadedmetadata', this.handleLoadedmetadata, false);
+      this.audio.addEventListener('play', this.handlePlay, false);
+      this.audio.addEventListener('pause', this.handlePause, false);
+      this.audio.addEventListener('ended', this.handleEnded, false);
+      this.audio.addEventListener('error', this.handleError, false);
+      this.audio.addEventListener('timeupdate', this.handleTimeUpdate, false);
+      this.audio.addEventListener('seeking', this.handleSeeking, false);
+      this.audio.addEventListener('seeked', this.handleSeeked, false);
     },
     /**
      * Unbind DOM events from Audio object
      */
-    unbindEvents: function(){
-      this.audio.removeEventListener('loadstart', this.onLoadStart.bind(this));
-      this.audio.removeEventListener('canplay', this.onLoad.bind(this));
-      this.audio.removeEventListener('loadedmetadata', this.onLoadedMetadata.bind(this));
-      this.audio.removeEventListener('play', this.onPlay.bind(this));
-      this.audio.removeEventListener('pause', this.onPause.bind(this));
-      this.audio.removeEventListener('ended', this.onEnded.bind(this));
-      this.audio.removeEventListener('error', this.onError.bind(this));
-      this.audio.removeEventListener('timeupdate', this.onTimeUpdate.bind(this));
-      this.audio.removeEventListener('seeking', this.onSeeking.bind(this));
-      this.audio.removeEventListener('seeked', this.onSeeked.bind(this));
+    unbindEvents: function() {
+      this.audio.removeEventListener('loadstart', this.handleLoadStart);
+      this.audio.removeEventListener('canplay', this.handleCanPlay);
+      this.audio.removeEventListener('loadedmetadata', this.handleLoadedmetadata);
+      this.audio.removeEventListener('play', this.handlePlay);
+      this.audio.removeEventListener('pause', this.handlePause);
+      this.audio.removeEventListener('ended', this.handleEnded);
+      this.audio.removeEventListener('error', this.handleError);
+      this.audio.removeEventListener('timeupdate', this.handleTimeUpdate);
+      this.audio.removeEventListener('seeking', this.handleSeeking);
+      this.audio.removeEventListener('seeked', this.handleSeeked);
     },
     /**
      * Audio load start event handler. Triggered when audio starts loading
