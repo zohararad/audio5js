@@ -463,9 +463,12 @@
       }
 
       function audioEnded () {
+        var that = this;
         this.seek(0);
-        this.pause();
-        btn.innerHTML = 'Play';
+        setTimeout(function(){
+          that.pause();
+          btn.innerHTML = 'Play';
+        }, 50);
       }
 
       audio5 = new Audio5js({
