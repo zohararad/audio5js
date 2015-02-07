@@ -165,6 +165,7 @@ Audio5js exposes the following API:
 
 Like HTML5's Audio, Audio5js exposes events that can be used to capture the state and properties of the audio playback cycle:
 
+* **canplay** - triggered when the audio has been loaded can can be played. Analogue to HTML5 Audio `canplay` event. Note that Firefox will trigger this event after seeking as well - If you're listening to this event, we recommend you use the `one('canplay',callback)` event listener binding, instead of the `on('canplay',callback)`.
 * **play** - triggered when the audio begins playing. Analogue to HTML5 Audio `play` event.
 * **pause** - triggered when the audio is paused. Analogue to HTML5 Audio `pause` event.
 * **ended** - triggered when the audio playback has ended. Analogue to HTML5 Audio `ended` event.
@@ -262,7 +263,7 @@ needs to load the audio. Here's an example of how to load and play audio on Safa
 
   var playPause = function () {
     if (!loaded) {
-      this.on('canplay', function () {
+      this.one('canplay', function () {
         loaded = true;
         this.play();
       }, this);
