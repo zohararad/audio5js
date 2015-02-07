@@ -12,7 +12,9 @@ describe('Audio5 Playback', function(){
         });
 
         this.on('play', function(){
-          that.playPause();
+          setTimeout(function(){
+            that.playPause();
+          }, 1000);
         });
 
         this.on('pause', function(){
@@ -24,7 +26,6 @@ describe('Audio5 Playback', function(){
       }
     });
   });
-
   it('should have a duration', function(done){
     var audio5 = new Audio5js({
       swf_path: '../swf/audio5js.swf',
@@ -54,9 +55,12 @@ describe('Audio5 Playback', function(){
         var that = this;
 
         this.on('canplay', function () {
-          that.pause();
-          expect(that.audio.seekable).to.be.equal(true);
-          done();
+          that.play();
+          setTimeout(function(){
+            that.pause();
+            expect(that.audio.seekable).to.be.equal(true);
+            done();
+          }, 2000);
         });
 
         this.load('./assets/sample.mp3');
@@ -91,10 +95,12 @@ describe('Audio5 Playback', function(){
         var that = this;
 
         this.on('play', function () {
-          that.pause();
-          that.volume(0);
-          expect(that.volume()).to.be.equal(0);
-          done();
+          setTimeout(function(){
+            that.pause();
+            that.volume(0);
+            expect(that.volume()).to.be.equal(0);
+            done();
+          }, 1000);
         });
 
         this.load('./assets/sample.mp3');
