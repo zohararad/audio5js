@@ -94,6 +94,7 @@ Audio5js exposes the following API:
 * **playPause** - toggle play/pause playback state
 * **volume** - get / set volume (volume range is 0-1)
 * **seek** - move playhead position to a given time in seconds
+* **destroy** - destroys your Audio5js instance. Use to completely remove audio from the DOM and unbind all event listeners.
 
 ### Instance Attributes
 
@@ -172,6 +173,9 @@ Like HTML5's Audio, Audio5js exposes events that can be used to capture the stat
 * **error** - triggered when the audio load error occurred. Analogue to HTML5 Audio `error` event.
 * **timeupdate** - triggered when the audio playhead position changes (during playback). Analogue to HTML5 Audio `timeupdate` event.
 * **progress** - triggered while audio file is being downloaded by the browser. Analogue to HTML5 Audio `progress` event.
+* **seeking** - audio is seeking to a new position (in seconds)
+* **seeked** - audio has been seeked successfully to new position
+* **loadedmetadata** - MP3 meta-data has been loaded (works with MP3 files only)
 
 ### Using Events
 
