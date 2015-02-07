@@ -15,6 +15,7 @@ require(['../../src/audio5'], function(Audio5js){
           player = o;
           this.should.be.an('object');
           done();
+          this.destroy();
         }
       });
     });

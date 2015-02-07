@@ -14,6 +14,7 @@ describe('Audio5 Object', function(){
       ready: function (o) {
         player = o;
         expect(this).to.be.an('object');
+        this.destroy();
         done();
       }
     });
@@ -36,6 +37,7 @@ describe('Audio5 Object', function(){
         this.on('canplay', function () {
           that.destroy();
           expect(that.audio.audio).to.be.undefined;
+          that.destroy();
           done();
         });
         this.load('./assets/sample.mp3');

@@ -1,8 +1,10 @@
 describe('Audio5 Playback', function(){
   "use strict";
 
+  var audio5;
+
   it('should toggle playPause', function(done){
-    var audio5 = new Audio5js({
+    audio5 = new Audio5js({
       swf_path: '../swf/audio5js.swf',
       codecs: ['mp3'],
       ready: function () {
@@ -20,6 +22,7 @@ describe('Audio5 Playback', function(){
         this.on('pause', function(){
           if(!that.playing){
             done();
+            that.destroy();
           }
         });
         this.load('./assets/sample.mp3');
@@ -27,7 +30,7 @@ describe('Audio5 Playback', function(){
     });
   });
   it('should have a duration', function(done){
-    var audio5 = new Audio5js({
+    audio5 = new Audio5js({
       swf_path: '../swf/audio5js.swf',
       codecs: ['mp3'],
       format_time: false,
@@ -39,6 +42,7 @@ describe('Audio5 Playback', function(){
           var d = Math.round(that.duration);
           expect(d).to.be.equal(4);
           done();
+          that.destroy();
         });
 
         this.load('./assets/sample.mp3');
@@ -48,7 +52,7 @@ describe('Audio5 Playback', function(){
   });
 
   it('should be seekable', function(done){
-    var audio5 = new Audio5js({
+    audio5 = new Audio5js({
       swf_path: '../swf/audio5js.swf',
       codecs: ['mp3'],
       ready: function () {
@@ -60,6 +64,7 @@ describe('Audio5 Playback', function(){
             that.pause();
             expect(that.audio.seekable).to.be.equal(true);
             done();
+            that.destroy();
           }, 2000);
         });
 
@@ -69,7 +74,7 @@ describe('Audio5 Playback', function(){
   });
 
   it('should seek to a position', function(done){
-    var audio5 = new Audio5js({
+    audio5 = new Audio5js({
       swf_path: '../swf/audio5js.swf',
       codecs: ['mp3'],
       ready: function () {
@@ -80,6 +85,7 @@ describe('Audio5 Playback', function(){
           that.seek(4);
           expect(that.position).to.be.equal(4);
           done();
+          that.destroy();
         });
 
         this.load('./assets/sample.mp3');
@@ -88,7 +94,7 @@ describe('Audio5 Playback', function(){
   });
 
   it('should change volume', function(done){
-    var audio5 = new Audio5js({
+    audio5 = new Audio5js({
       swf_path: '../swf/audio5js.swf',
       codecs: ['mp3'],
       ready: function () {
@@ -100,6 +106,7 @@ describe('Audio5 Playback', function(){
             that.volume(0);
             expect(that.volume()).to.be.equal(0);
             done();
+            that.destroy();
           }, 1000);
         });
 
