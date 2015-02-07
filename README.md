@@ -94,6 +94,7 @@ Audio5js exposes the following API:
 * **playPause** - toggle play/pause playback state
 * **volume** - get / set volume (volume range is 0-1)
 * **seek** - move playhead position to a given time in seconds
+* **destroy** - destroys your Audio5js instance. Use to completely remove audio from the DOM and unbind all event listeners.
 
 ### Instance Attributes
 
@@ -165,12 +166,16 @@ Audio5js exposes the following API:
 
 Like HTML5's Audio, Audio5js exposes events that can be used to capture the state and properties of the audio playback cycle:
 
+* **canplay** - triggered when the audio has been loaded can can be played. Analogue to HTML5 Audio `canplay` event. Note that Firefox will trigger this event after seeking as well - If you're listening to this event, we recommend you use the `one('canplay',callback)` event listener binding, instead of the `on('canplay',callback)`.
 * **play** - triggered when the audio begins playing. Analogue to HTML5 Audio `play` event.
 * **pause** - triggered when the audio is paused. Analogue to HTML5 Audio `pause` event.
 * **ended** - triggered when the audio playback has ended. Analogue to HTML5 Audio `ended` event.
 * **error** - triggered when the audio load error occurred. Analogue to HTML5 Audio `error` event.
 * **timeupdate** - triggered when the audio playhead position changes (during playback). Analogue to HTML5 Audio `timeupdate` event.
 * **progress** - triggered while audio file is being downloaded by the browser. Analogue to HTML5 Audio `progress` event.
+* **seeking** - audio is seeking to a new position (in seconds)
+* **seeked** - audio has been seeked successfully to new position
+* **loadedmetadata** - MP3 meta-data has been loaded (works with MP3 files only)
 
 ### Using Events
 
@@ -262,7 +267,7 @@ needs to load the audio. Here's an example of how to load and play audio on Safa
 
   var playPause = function () {
     if (!loaded) {
-      this.on('canplay', function () {
+      this.one('canplay', function () {
         loaded = true;
         this.play();
       }, this);

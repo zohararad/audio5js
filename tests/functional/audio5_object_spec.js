@@ -14,6 +14,7 @@ describe('Audio5 Object', function(){
       ready: function (o) {
         player = o;
         expect(this).to.be.an('object');
+        this.destroy();
         done();
       }
     });

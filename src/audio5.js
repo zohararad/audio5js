@@ -686,8 +686,10 @@
      */
     load: function (url) {
       this.reset();
-      this.destroyAudio();
-      this.createAudio();
+      //this.destroyAudio();
+      if(this.audio === undefined){
+        this.createAudio();
+      }
       this.audio.setAttribute('src', url);
       this.audio.load();
     },
@@ -858,6 +860,23 @@
       this.audio.on('seeked', this.onSeeked, this);
     },
     /**
+     * Bind events from audio object to internal callbacks
+     */
+    unbindAudioEvents: function () {
+      this.audio.off('ready', this.onReady);
+      this.audio.off('loadstart', this.onLoadStart);
+      this.audio.off('loadedmetadata', this.onLoadedMetadata);
+      this.audio.off('play', this.onPlay);
+      this.audio.off('pause', this.onPause);
+      this.audio.off('ended', this.onEnded);
+      this.audio.off('canplay', this.onCanPlay);
+      this.audio.off('timeupdate', this.onTimeUpdate);
+      this.audio.off('progress', this.onProgress);
+      this.audio.off('error', this.onError);
+      this.audio.off('seeking', this.onSeeking);
+      this.audio.off('seeked', this.onSeeked);
+    },
+    /**
      * Load audio from URL
      * @param {String} url URL of audio to load
      */
@@ -921,6 +940,7 @@
      * Destroy audio object and remove from DOM
      */
     destroy: function() {
+      this.unbindAudioEvents();
       this.audio.destroyAudio();
     },
     /**
