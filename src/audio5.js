@@ -198,7 +198,11 @@
         if (mime_type === 'mp3' && navigator.userAgent.match(/Android/i) && navigator.userAgent.match(/Firefox/i)) {
           return true;
         }
-        return !!a.canPlayType && a.canPlayType(mime_str) !== '';
+        try {
+          return !!a.canPlayType && a.canPlayType(mime_str) !== '';
+        } catch (e) {
+          return false;
+        }
       }
       return false;
     },
