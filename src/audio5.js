@@ -389,6 +389,7 @@
     eiPlay: function () {
       this.playing = true;
       this.trigger('play');
+      this.trigger('playing');
     },
     /**
      * ExternalInterface audio pause callback. Fires when audio is paused.
@@ -531,6 +532,7 @@
         canplay: this.onLoad.bind(this),
         loadedmetadata: this.onLoadedMetadata.bind(this),
         play: this.onPlay.bind(this),
+        playing: this.onPlaying.bind(this),
         pause: this.onPause.bind(this),
         ended: this.onEnded.bind(this),
         error: this.onError.bind(this),
@@ -550,6 +552,7 @@
       this.audio.addEventListener('canplay', this.listeners.canplay, false);
       this.audio.addEventListener('loadedmetadata', this.listeners.loadedmetadata, false);
       this.audio.addEventListener('play', this.listeners.play, false);
+      this.audio.addEventListener('playing', this.listeners.playing, false);
       this.audio.addEventListener('pause', this.listeners.pause, false);
       this.audio.addEventListener('ended', this.listeners.ended, false);
       this.audio.addEventListener('error', this.listeners.error, false);
@@ -565,6 +568,7 @@
       this.audio.removeEventListener('canplay', this.listeners.canplay);
       this.audio.removeEventListener('loadedmetadata', this.listeners.loadedmetadata);
       this.audio.removeEventListener('play', this.listeners.play);
+      this.audio.removeEventListener('playing', this.listeners.playing);
       this.audio.removeEventListener('pause', this.listeners.pause);
       this.audio.removeEventListener('ended', this.listeners.ended);
       this.audio.removeEventListener('error', this.listeners.error);
@@ -604,6 +608,13 @@
     onPlay: function () {
       this.playing = true;
       this.trigger('play');
+    },
+    /**
+     * Audio play event handler. Triggered when audio starts playing.
+     */
+    onPlaying: function () {
+      this.playing = true;
+      this.trigger('playing');
     },
     /**
      * Audio pause event handler. Triggered when audio is paused.
@@ -702,13 +713,17 @@
      * Play audio
      */
     play: function () {
-      this.audio.play();
+      if(this.audio) {
+        this.audio.play();
+      }
     },
     /**
      * Pause audio
      */
     pause: function () {
-      this.audio.pause();
+      if(this.audio) {
+        this.audio.pause();
+      }
     },
     /**
      * Get / Set audio volume
