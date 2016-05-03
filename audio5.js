@@ -1043,9 +1043,7 @@
      */
     onTimeUpdate: function (position, duration) {
       this.position = this.settings.format_time ? util.formatTime(position) : position;
-      if (this.duration !== duration) {
-        this.duration = this.settings.format_time && duration !== null ? util.formatTime(duration) : duration;
-      }
+      this.duration = this.settings.format_time && duration !== null ? util.formatTime(duration) : duration;
       this.trigger('timeupdate', this.position, this.duration);
     },
     /**
