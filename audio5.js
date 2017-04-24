@@ -155,15 +155,17 @@
      */
   flash_embed_code: function (id, swf_location, ts) {
       var prefix;
-      var s = '<param name="movie" value="' + swf_location + '?playerInstance=window.' + ns + '_flash.instances[\'' + id + '\']&datetime=' + ts + '"/>' +
+      var elemId = ns + id;
+      var s = '<param name="movie" value="' + swf_location + '?playerInstanceNumber=' + id + '&datetime=' + ts + '"/>' +
         '<param name="wmode" value="transparent"/>' +
         '<param name="allowscriptaccess" value="always" />' +
         '</object>';
       if (ActiveXObject) {
-        prefix = '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="1" height="1" id="' + id + '">';
+        prefix = '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="1" height="1" id="' + elemId + '">';
       } else {
-        prefix = '<object type="application/x-shockwave-flash" data="' + swf_location + '?playerInstance=window.' + ns + '_flash.instances[\'' + id + '\']&datetime=' + ts + '" width="1" height="1" id="' + id + '" >';
+        prefix = '<object type="application/x-shockwave-flash" data="' + swf_location + '?playerInstanceNumber=' + id + '&datetime=' + ts + '" width="1" height="1" id="' + elemId + '" >';
       }
+
       return prefix + s;
     },
     /**
@@ -244,8 +246,8 @@
           allowscriptaccess: 'always',
           wmode: 'transparent'
         };
-        d.innerHTML = '<div id="'+id+'"></div>';
-        swfobject.embedSWF(swf_location + '?ts='+(new Date().getTime() + Math.random()), id, "1", "1", "9.0.0", null, fv, params);
+        d.innerHTML = '<div id="'+ ns + id +'"></div>';
+        swfobject.embedSWF(swf_location + '?ts='+(new Date().getTime() + Math.random()), ns + id, "1", "1", "9.0.0", null, fv, params);
       } else {
         var ts = new Date().getTime() + Math.random(); // Ensure swf is not pulled from cache
         d.innerHTML = this.flash_embed_code(id, swf_location, ts);
@@ -295,8 +297,7 @@
    * @type {Object}
    */
   var globalAudio5Flash = $win[ns + '_flash'] = $win[ns + '_flash'] || {
-    instances: { }, /** FlashAudioPlayer instance hash */
-    count: 0 /** FlashAudioPlayer instance count */
+    instances: [] /** FlashAudioPlayer instance hash */
   };
 
   /**
@@ -315,9 +316,8 @@
      * @param {String} swf_src path to audio player SWF file
      */
     init: function (swf_src) {
-      globalAudio5Flash.count += 1;
-      this.id = ns + globalAudio5Flash.count;
-      globalAudio5Flash.instances[this.id] = this;
+      globalAudio5Flash.instances.push(this);
+      this.id = globalAudio5Flash.instances.length - 1;
       this.embed(swf_src);
     },
     /**
@@ -331,7 +331,7 @@
      * ExternalInterface callback indicating SWF is ready
      */
     eiReady: function () {
-      this.audio = document.getElementById(this.id);
+      this.audio = document.getElementById(ns + this.id);
       this.trigger('ready');
     },
     /**
@@ -477,6 +477,7 @@
         this.pause();
         this.audio.parentNode.removeChild(this.audio);
         delete globalAudio5Flash.instances[this.id];
+        globalAudio5Flash.instances.splice(this.id, 1);
         delete this.audio;
       }
     }
@@ -901,11 +902,11 @@
      * @param {String} url URL of audio to load
      */
     load: function (url) {
-      var that = this,
-          f = function(u){
-            that.audio.load(u);
-            that.trigger('load');
-          };
+      var that = this;
+      var f = function(u){
+        that.audio.load(u);
+        that.trigger('load');
+      };
 
       if(this.ready){
         f(url);

@@ -14,7 +14,7 @@ package {
 	import flash.net.URLRequest;
 	import flash.system.Security;
 	import flash.utils.Timer;
-	
+
 	public class audio5js extends Sprite {
 
 		private var _channel:SoundChannel;
@@ -22,12 +22,10 @@ package {
 		private var duration:Number;
 		private var seekable:Boolean;
 		private var playerInstance:String;
-
 		private var pausePoint:Number = 0;
 		private var playing:Boolean = false;
 		private var volume:Number = 1;
 		private var timer:Timer = new Timer(250, 0);
-
 
 		private function get channel():SoundChannel {
 			return this._channel;
@@ -45,12 +43,17 @@ package {
 			// Wait until first frame to alert JS it's ready.
 			addEventListener(Event.ENTER_FRAME, ready);
 		}
-		
+
 		public function ready(event:Event):void
 		{
 			removeEventListener(Event.ENTER_FRAME, ready);
+			var playerInstanceNumber:String = root.loaderInfo.parameters.playerInstanceNumber;
 
-			this.playerInstance = root.loaderInfo.parameters.playerInstance+'.';
+			if (isNaN(Number(playerInstanceNumber))) {
+				return;
+			}
+
+			this.playerInstance = 'window.Audio5js_flash.instances[' + root.loaderInfo.parameters.playerInstanceNumber + '].';
 
 			ExternalInterface.addCallback('load', load);
 			ExternalInterface.addCallback('playPause', playPause);
@@ -58,7 +61,7 @@ package {
 			ExternalInterface.addCallback('ppause', pause);
 			ExternalInterface.addCallback('seekTo', seekTo);
 			ExternalInterface.addCallback('setVolume', setVolume);
-			
+
 			ExternalInterface.call(this.playerInstance+'eiReady');
 		}
 
@@ -72,12 +75,12 @@ package {
 				this.timer.removeEventListener(TimerEvent.TIMER, this.timeUpdate);
 				this.sound.removeEventListener(ProgressEvent.PROGRESS, this.canPlay);
 			}
-			
+
 			this.seekable = false;
 			this.channel = new SoundChannel();
 			this.sound = new Sound(new URLRequest(mp3));
 			this.pausePoint = 0;
-			
+
 			this.sound.addEventListener(Event.OPEN, this.loadStart);
 			this.sound.addEventListener(IOErrorEvent.IO_ERROR, this.loadError);
 			this.sound.addEventListener(ProgressEvent.PROGRESS, this.loadProgress);
@@ -85,7 +88,7 @@ package {
 			this.timer.addEventListener(TimerEvent.TIMER, this.timeUpdate);
 			this.sound.addEventListener(ProgressEvent.PROGRESS, this.canPlay);
 		}
-		
+
 		private function play():void {
 			this.channel = this.sound.play(this.pausePoint);
 			this.setVolume(this.volume);
@@ -136,7 +139,7 @@ package {
 		private function loadStart(e:Event):void {
 			ExternalInterface.call(this.playerInstance+'eiLoadStart');
 		}
-		
+
 		private function loadError(e:IOErrorEvent):void {
 			var msg:String = e.text;
 			ExternalInterface.call(this.playerInstance+'eiLoadError', msg);
@@ -146,7 +149,7 @@ package {
 			this.duration = (e.bytesTotal / (e.bytesLoaded / this.sound.length));
 			var loadPercent:Number = e.bytesLoaded / e.bytesTotal;
 			this.seekable = e.bytesTotal > 0 && this.sound.length > 0;
-			
+
 			if (loadPercent > 1) loadPercent = 1;
 			if (!this.seekable) loadPercent = 0;
 			if (loadPercent >= 0 && this.seekable) {
