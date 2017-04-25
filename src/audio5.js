@@ -663,6 +663,7 @@
      * @param e error event
      */
     onError: function (e) {
+      this.trigger('pause');
       this.trigger('error', e);
     },
     /**
