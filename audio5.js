@@ -818,6 +818,8 @@
       this.ready = false;
       this.settings = s;
       this.audio = this.getPlayer();
+      this.current_item_play_list = null;
+      this.play_list = null;
       this.bindAudioEvents();
       if (this.settings.use_flash) {
         this.audio.init(s.swf_path);
@@ -965,6 +967,61 @@
       this.audio.destroyAudio();
     },
     /**
+     * Loads a Playlist
+     */
+    loadPlaylist: function(playlist) {
+      this.play_list = playlist;
+      this.current_item_play_list = -1;
+    },
+    /**
+     * Start the playlist
+     */
+    startPlaylist: function() {
+      this.current_item_play_list = -1;
+      this.next();
+    },
+    /**
+     * Clear the playlist
+     */
+    clearPlaylist: function() {
+      this.current_item_play_list = null;
+      this.play_list = null;
+    },
+    /**
+     * Get the index of the current track on the list
+     */
+    current: function() {
+      return this.current_item_play_list;
+    },
+    /**
+     * Skip to the next track in the playlist
+     */
+    next: function() {
+      if (this.current_item_play_list === null) {
+        this.onError('There is no playlist loaded');
+        return false;
+      }
+      if (this.current_item_play_list >= this.play_list.length-1) {
+        return false;
+      }
+      this.load(this.play_list[++this.current_item_play_list]);
+      this.play();
+    },
+    /**
+     * Skip to the previous track in the playlist
+     */
+    previous: function() {
+      if (this.current_item_play_list === null) {
+        this.onError('There is no playlist loaded');
+        return false;
+      }
+      if (this.current_item_play_list <= 0) {
+        return false;
+      }
+      this.load(this.play_list[--this.current_item_play_list]);
+      this.play();
+    },
+    /**
      * Callback for audio ready event. Indicates audio is ready for playback.
      * Looks for ready callback in settings object and invokes it in the context of player instance
      */
@@ -1007,12 +1064,15 @@
     onEnded: function () {
       this.playing = false;
       this.trigger('ended');
+      if (this.current_item_play_list !== null && this.current_item_play_list >= 0) {
+          this.next();
+      }
     },
     /**
      * Audio error event handler
      */
-    onError: function () {
-      var error = new AudioError('Audio Error. Failed to Load Audio');
+    onError: function (msg) {
+      var error = new AudioError(msg === undefined ?'Audio Error. Failed to Load Audio': msg);
       if (this.settings.throw_errors) {
         throw error;
       } else {
