@@ -470,6 +470,12 @@
       } catch (e) {}
     },
     /**
+     * This feature was not implemented for Flash
+     */
+    rate: function () {
+      // Not implemented
+    },
+    /**
      * Destroy audio object and remove from DOM
      */
     destroyAudio: function() {
@@ -497,6 +503,7 @@
      * Initialize the player instance
      */
     init: function () {
+      this._rate = 1;
       this.trigger('ready');
     },
     /**
@@ -507,6 +514,7 @@
       this.audio.autoplay = false;
       this.audio.preload = 'auto';
       this.audio.autobuffer = true;
+      this.audio.playbackRate = this._rate;
       this.bindEvents();
     },
     /**
@@ -716,6 +724,7 @@
     play: function () {
       if(this.audio) {
         this.audio.play();
+        this.audio.playbackRate = this._rate;
       }
     },
     /**
@@ -754,6 +763,19 @@
         if (this.audio.buffered !== null && this.audio.buffered.length) {
           this.trigger('timeupdate', this.position, this.duration);
         }
+      }
+    },
+    /**
+     * Define the playback rate
+     * @param {Float} v playback rate value to be set
+     */
+    rate: function (v) {
+      if (v === undefined || isNaN(parseFloat(v))) {
+        return this._rate;
+      }
+      this._rate = v;
+      if (this.audio) {
+          this.audio.playbackRate = v;
       }
     }
   };
@@ -956,6 +978,13 @@
     seek: function (position) {
       this.audio.seek(position);
       this.position = position;
+    },
+    /**
+     * Define the playback rate
+     * @param {Float} value playback rate value to be set
+     */
+    rate: function (value) {
+        return this.audio.rate(value);
     },
     /**
      * Destroy audio object and remove from DOM

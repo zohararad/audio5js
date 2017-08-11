@@ -116,4 +116,26 @@ describe('Audio5 Playback', function(){
     });
   });
 
+  it('should change the rate', function(done){
+    audio5 = new Audio5js({
+      codecs: ['mp3'],
+      ready: function () {
+        var that = this;
+
+        this.on('play', function () {
+          setTimeout(function(){
+            expect(that.rate()).to.be.equal(0.5);
+            that.rate(1.5);
+            expect(that.rate()).to.be.equal(1.5);
+            done();
+            that.destroy();
+          }, 1000);
+        });
+
+        this.load('./assets/sample.mp3');
+        this.rate(0.5)
+        this.play();
+      }
+    });
+  });
 });
