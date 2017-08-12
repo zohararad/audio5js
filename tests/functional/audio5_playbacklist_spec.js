@@ -1,4 +1,4 @@
-describe('Audio5 Playback', function(){
+describe('Audio5 Playback With List', function(){
   "use strict";
 
   var audio5;
@@ -16,20 +16,24 @@ describe('Audio5 Playback', function(){
         });
 
         this.on('play', function(){
-          countEvents += 1;
           setTimeout(function(){
+            countEvents += 1;
             that.playPause();
           }, 1000);
         });
 
         this.on('pause', function(){
           if(!that.playing && countEvents > 0){
-            expect(countEvents).to.be.equal(101);
-            done();
-            that.destroy();
+            if (that.current() < 1) {
+              that.next();
+            } else {
+              expect(countEvents).to.be.equal(201);
+              done();
+              that.destroy();
+            }
           }
         });
-        this.load('./assets/sample.mp3');
+        this.load(['./assets/sample.mp3','./assets/sample2.mp3']);
       }
     });
   });
@@ -44,12 +48,18 @@ describe('Audio5 Playback', function(){
         this.on('timeupdate', function () {
           that.pause();
           var d = Math.round(that.duration);
-          expect(d).to.be.equal(4);
-          done();
-          that.destroy();
+          if (that.current() === 1) {
+            expect(d).to.be.equal(15);
+            done();
+            that.destroy();
+          }
+          if (that.current() === 0) {
+            expect(d).to.be.equal(4);
+            that.next();
+          }
         });
 
-        this.load('./assets/sample.mp3');
+        this.load(['./assets/sample.mp3', './assets/sample2.mp3']);
         this.play();
       }
     });
@@ -67,12 +77,18 @@ describe('Audio5 Playback', function(){
           setTimeout(function(){
             that.pause();
             expect(that.audio.seekable).to.be.equal(true);
-            done();
-            that.destroy();
+            that.next();
+
+            setTimeout(function() {
+                that.pause();
+                expect(that.audio.seekable).to.be.equal(true);
+                done();
+                that.destroy();
+            }, 2000)
           }, 2000);
         });
 
-        this.load('./assets/sample.mp3');
+        this.load(['./assets/sample.mp3', './assets/sample2.mp3']);
       }
     });
   });
@@ -86,13 +102,20 @@ describe('Audio5 Playback', function(){
 
         this.on('canplay', function () {
           that.pause();
-          that.seek(4);
-          expect(that.position).to.be.equal(4);
-          done();
-          that.destroy();
+          if (that.current() === 1) {
+            that.seek(15);
+            expect(that.position).to.be.equal(15);
+            done();
+            that.destroy();
+          }
+          if (that.current() === 0) {
+            that.seek(4);
+            expect(that.position).to.be.equal(4);
+            that.next();
+          }
         });
 
-        this.load('./assets/sample.mp3');
+        this.load(['./assets/sample.mp3', './assets/sample2.mp3']);
       }
     });
   });
@@ -109,12 +132,18 @@ describe('Audio5 Playback', function(){
             that.pause();
             that.volume(0);
             expect(that.volume()).to.be.equal(0);
-            done();
-            that.destroy();
+            that.volume(1);
+            expect(that.volume()).to.be.equal(1);
+            if (that.current() === 1) {
+              done();
+              that.destroy();
+            } else {
+              that.next();
+            }
           }, 1000);
         });
 
-        this.load('./assets/sample.mp3');
+        this.load(['./assets/sample.mp3', './assets/sample2.mp3']);
         this.play();
       }
     });
@@ -131,12 +160,18 @@ describe('Audio5 Playback', function(){
             expect(that.rate()).to.be.equal(0.5);
             that.rate(1.5);
             expect(that.rate()).to.be.equal(1.5);
-            done();
-            that.destroy();
+            if (that.current() === 0) {
+              that.next();
+              that.rate(0.5);
+            } else {
+              that.pause();
+              done();
+              that.destroy();
+            }
           }, 1000);
         });
 
-        this.load('./assets/sample.mp3');
+        this.load(['./assets/sample.mp3', './assets/sample2.mp3']);
         this.rate(0.5);
         this.play();
       }
