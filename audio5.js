@@ -644,7 +644,6 @@
      */
     onTimeUpdate: function () {
       if (this.audio && this.playing) {
-        if (this.audio.duration !== this.audio.duration) return; // Do nothing, audio is not ready yet; Result === Nan
         try{
           this.position = this.audio.currentTime;
           this.duration = this.audio.duration === Infinity ? null : this.audio.duration;
@@ -832,12 +831,6 @@
     return util.can_play(mime_type);
   };
 
-  function _audioLoad(obj, file) {
-      obj.playing = false;
-      obj.audio.load(file);
-      obj.trigger('load');
-  }
-
   Audio5js.prototype = {
     /**
      * Initialize player instance.
@@ -847,8 +840,6 @@
       this.ready = false;
       this.settings = s;
       this.audio = this.getPlayer();
-      this.current_item_play_list = 0;
-      this.play_list = null;
       this.bindAudioEvents();
       if (this.settings.use_flash) {
         this.audio.init(s.swf_path);
@@ -935,16 +926,12 @@
     load: function (url) {
       var that = this;
       var f = function(u){
-        that.audio.load(u instanceof Array ? u[0]: u);
+        that.audio.load(u);
         that.trigger('load');
-        that.playing = false;
       };
 
-      this.play_list = (url instanceof Array ? url : [url]);
-      this.current_item_play_list = 0;
-
       if(this.ready){
-        f(this.play_list[0]);
+        f(url);
       } else {
         this.on('ready', f);
       }
@@ -952,13 +939,7 @@
     /**
      * Play audio
      */
-    play: function (n) {
-      if (n !== undefined) {
-        if (n < 0 || n >= this.play_list.length) {
-          throw new AudioError('Invalid range for play');
-        }
-        _audioLoad(this, this.play_list[n]);
-      }
+    play: function () {
       if(!this.playing){
         this.audio.play();
       }
@@ -1013,32 +994,6 @@
       this.audio.destroyAudio();
     },
     /**
-     * Get the index of the current track on the list
-     */
-    current: function() {
-      return this.current_item_play_list;
-    },
-    /**
-     * Skip to the next track in the playlist
-     */
-    next: function(play) {
-      if (this.current_item_play_list >= this.play_list.length-1) {
-        return false;
-      }
-      _audioLoad(this, this.play_list[++this.current_item_play_list]);
-      if (play !== false) this.play();
-    },
-    /**
-     * Skip to the previous track in the playlist
-     */
-    previous: function(play) {
-      if (this.current_item_play_list <= 0) {
-        return false;
-      }
-      _audioLoad(this, this.play_list[--this.current_item_play_list])
-      if (play !== false) this.play();
-    },
-    /**
      * Callback for audio ready event. Indicates audio is ready for playback.
      * Looks for ready callback in settings object and invokes it in the context of player instance
      */
@@ -1081,13 +1036,12 @@
     onEnded: function () {
       this.playing = false;
       this.trigger('ended');
-      this.next();
     },
     /**
      * Audio error event handler
      */
-    onError: function (msg) {
-      var error = new AudioError(msg === undefined ?'Audio Error. Failed to Load Audio': msg);
+    onError: function () {
+      var error = new AudioError('Audio Error. Failed to Load Audio');
       if (this.settings.throw_errors) {
         throw error;
       } else {

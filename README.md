@@ -98,6 +98,7 @@ Audio5js exposes the following API:
 * **next** - play the next file from the list or do nothing if does not exists
 * **previous** - play the previous file from the list or do nothing if does not exists
 * **destroy** - destroys your Audio5js instance. Use to completely remove audio from the DOM and unbind all event listeners.
+* **rate** - set the playback rate. (playback rate range is 0.5-4.0)
 
 ### Instance Attributes
 
