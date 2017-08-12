@@ -137,7 +137,7 @@ describe('Audio5 Playback', function(){
         });
 
         this.load('./assets/sample.mp3');
-        this.rate(0.5)
+        this.rate(0.5);
         this.play();
       }
     });

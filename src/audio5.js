@@ -644,7 +644,9 @@
      */
     onTimeUpdate: function () {
       if (this.audio && this.playing) {
-        if (this.audio.duration !== this.audio.duration) return; // Do nothing, audio is not ready yet; Result === Nan
+        if (this.audio.duration !== this.audio.duration) { // Do nothing, audio is not ready yet; Result === Nan
+          return;
+        }
         try{
           this.position = this.audio.currentTime;
           this.duration = this.audio.duration === Infinity ? null : this.audio.duration;
@@ -1026,7 +1028,9 @@
         return false;
       }
       _audioLoad(this, this.play_list[++this.current_item_play_list]);
-      if (play !== false) this.play();
+      if (play !== false) {
+        this.play();
+      }
     },
     /**
      * Skip to the previous track in the playlist
@@ -1035,8 +1039,10 @@
       if (this.current_item_play_list <= 0) {
         return false;
       }
-      _audioLoad(this, this.play_list[--this.current_item_play_list])
-      if (play !== false) this.play();
+      _audioLoad(this, this.play_list[--this.current_item_play_list]);
+      if (play !== false) {
+        this.play();
+      }
     },
     /**
      * Callback for audio ready event. Indicates audio is ready for playback.
