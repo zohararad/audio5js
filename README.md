@@ -88,12 +88,15 @@ Audio5js exposes the following API:
 
 ### Instance Methods
 
-* **load** - load an audio file from URL
+* **load** - load an audio file or a list of files from URL
 * **play** - play loaded audio
 * **pause** - pause loaded audio
 * **playPause** - toggle play/pause playback state
 * **volume** - get / set volume (volume range is 0-1)
 * **seek** - move playhead position to a given time in seconds
+* **current** - the index of the current file of the list
+* **next** - play the next file from the list or do nothing if does not exists
+* **previous** - play the previous file from the list or do nothing if does not exists
 * **destroy** - destroys your Audio5js instance. Use to completely remove audio from the DOM and unbind all event listeners.
 
 ### Instance Attributes
@@ -254,6 +257,38 @@ Here's an example of initializing Audio5js with multiple audio sources, based on
   });
 
 ```
+
+## Load a list of files at once. 
+
+Here's an example of initializing Audio5js with a list of files. 
+
+```html
+<button id="previous" type="button">Previous Track</button>
+<button id="next" type="button">Next Track</button>
+<script>
+
+  var previousFn = function () {
+    this.previous();
+  }
+  
+  var nextFn = function () {
+    this.next();
+  }
+  
+  var audio5js = new Audio5js({
+    swf_path: '/swf/audio5js.swf',
+    ready: function() {
+      var btnPrev = document.getElementById('previous');
+      var btnNext = document.getElementById('next');
+      btnPrev.addEventListener('click', previousFn.bind(this), false);
+      btnNext.addEventListener('click', nextFn.bind(this), false);
+      this.load(['audio_url1.mp3', 'audio_url2.mp3', 'audio_url3.mp3']);
+      this.play();
+    }
+  });
+</script>
+```
+
 
 ## Safari Mobile
 
