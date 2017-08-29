@@ -256,6 +256,48 @@ Here's an example of initializing Audio5js with multiple audio sources, based on
 
 ```
 
+## Playlist API
+
+The Playlist API intended to manage a list of files and enable to play, go to next and previous. 
+All controls and events remain on Audio5js object. 
+
+```javascript
+var playlist = new Audio5js.Playlist({
+  urls: ['./assets/sample.mp3', './assets/sample2.mp3']
+});
+
+// Some methods on playlist
+playlist.play();
+playlist.next();
+playlist.goTo(1);
+
+// Handle directly the current Audio5js object
+playlist.currentAudio.rate(2);
+playlist.currentAudio.volume(1);
+```
+
+### Constructor Options
+
+* **urls** - Array of URL audio files;
+* **autonext** - Play the next track automatically if equals to true
+* **options** - Pass this options for each Audio5js track (see API options)
+* **events** - Set this events for each Audio5js track (see API Events)
+
+### Instance Methods
+
+* **play** - load the first track and start playing
+* **pause** - pause the current track
+* **next** - go to the next track and returns an Audio5js instance if succeeded
+* **previous** - go to the previous track and returns an Audio5js instance if succeeded
+* **goTo(n)** - move the n-nth track and returns an Audio5js instance if succeeded
+
+### Instance Attributes
+
+* **current** - Return the numeric position of the current playing track.
+* **currentAudio** - Return an Audio5js the current playing track
+* **settings** - All constructor options
+
+
 ## Safari Mobile
 
 Safari mobile won't let you play audio without explicit user interaction. In other words, the initial click on your "play" button
