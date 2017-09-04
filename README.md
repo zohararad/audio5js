@@ -262,7 +262,7 @@ The Playlist API intended to manage a list of files and enable to play, go to ne
 All controls and events remain on Audio5js object. 
 
 ```javascript
-var playlist = new Audio5js.Playlist({
+var playlist = new Playlist5js({
   urls: ['./assets/sample.mp3', './assets/sample2.mp3']
 });
 
