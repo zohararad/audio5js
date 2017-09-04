@@ -1090,14 +1090,14 @@
   include(Audio5js, Pubsub);
   include(Audio5js, AudioAttributes);
 
-    var playlistSettings = {
-      autonext: false,
-      urls: [],
-      options: {},
-      events: {}
-    };
+  var playlistSettings = {
+    autonext: false,
+    urls: [],
+    options: {},
+    events: {}
+  };
 
-    function _createAudio5js(playlist) {
+  function _createAudio5js(playlist) {
     var file = playlist.settings.urls[playlist.current];
     var settings = playlist.settings;
 
@@ -1150,7 +1150,7 @@
   Audio5js.Playlist.prototype = {
     /**
      * Initialize the playlist
-     * @param {Object} Playlist options
+     * @param {Object} s options
      */
     init: function (s) {
       this.settings = s;
@@ -1180,6 +1180,9 @@
      */
     goTo: function (n) {
       if (n >= 0 && n < this.settings.urls.length) {
+        if (this.current !== n && this.currentAudio) {
+          this.currentAudio.destroy();
+        }
         this.current = n;
         this.currentAudio = _createAudio5js(this);
         return this.currentAudio;
