@@ -6,21 +6,22 @@
 (function ($win, ns, factory) {
   "use strict";
   /*global define */
-  /*global swfobject */
 
   if (typeof (module) !== 'undefined' && module.exports) { // CommonJS
-    module.exports = factory(ns, $win);
+    module.exports = factory();
   } else if (typeof (define) === 'function' && define.amd) { // AMD
     define(function () {
-      return factory(ns, $win);
+      return factory();
     });
   } else { // <script>
-    $win[ns] = factory(ns, $win);
+    $win[ns] = factory();
   }
 
-}(window, 'Playlist5js', function (ns, $win) {
+}(window, 'Playlist5js', function () {
 
   "use strict";
+
+  /*global Audio5js*/
 
   if (!Audio5js) {
     throw new Error('Audio5js class not defined. Did you load the audio5.js javascript?');
