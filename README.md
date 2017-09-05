@@ -270,6 +270,7 @@ var playlist = new Playlist5js({
 playlist.play();
 playlist.next();
 playlist.goTo(1);
+playlist.toggle();
 
 // Handle directly the current Audio5js object
 playlist.currentAudio.rate(2);
@@ -290,6 +291,7 @@ playlist.currentAudio.volume(1);
 * **next** - go to the next track and returns an Audio5js instance if succeeded
 * **previous** - go to the previous track and returns an Audio5js instance if succeeded
 * **goTo(n)** - move the n-nth track and returns an Audio5js instance if succeeded
+* **toggle** - toggle between play and pause; 
 
 ### Instance Attributes
 

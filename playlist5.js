@@ -136,6 +136,18 @@
       this.currentAudio.play();
     },
 
+    toggle: function() {
+      if (!this.currentAudio) {
+        this.goTo(0);
+      }
+
+      if (this.currentAudio.playing) {
+        this.pause();
+      } else {
+        this.play();
+      }
+    },
+
     /**
      * Pause the current audio.
      */
