@@ -12,6 +12,7 @@
   "contributors": [],
   "main": "./audio5.js",
   "ender": "./src/ender.js",
+  "playlist": "playlist5",
   "repository": {
     "type": "git",
     "url": "https://github.com/zohararad/audio5js.git"

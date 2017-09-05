@@ -12,8 +12,8 @@ module.exports = function(grunt) {
         dest: './<%= pkg.name %>.min.js'
       },
       playlist5: {
-        src: './playlist5.js',
-        dest: './playlist5.min.js'
+        src: './<%= pkg.playlist %>.js',
+        dest: './<%= pkg.playlist %>.min.js'
       }
     },
     concat: {
@@ -23,12 +23,12 @@ module.exports = function(grunt) {
       dist: {
         files: {
           './<%= pkg.name %>.js': ['./src/<%= pkg.name %>.js'],
-          './playlist5.js': ['./src/playlist5.js']
+          './<%= pkg.playlist %>.js': ['./src/<%= pkg.playlist %>.js']
         }
       }
     },
     jshint: {
-      files: ["./src/<%= pkg.name %>.js", './src/playlist5.js'],
+      files: ["./src/<%= pkg.name %>.js", './src/<%= pkg.playlist %>.js'],
       options: {
         "curly": true,
         "eqeqeq": true,
