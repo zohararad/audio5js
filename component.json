@@ -11,7 +11,8 @@
   "author": "Zohar Arad <zohar@zohararad.com> (http://zohararad.com)",
   "contributors": [],
   "scripts": [
-    "audio5.js"
+    "audio5.js",
+    "playlist5.js"
   ],
   "main": "audio5.js",
   "files": [
