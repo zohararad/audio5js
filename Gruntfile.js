@@ -7,9 +7,13 @@ module.exports = function(grunt) {
       options: {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
       },
-      build: {
-        src: ['./<%= pkg.name %>.js'],
+      audio5: {
+        src: './<%= pkg.name %>.js',
         dest: './<%= pkg.name %>.min.js'
+      },
+      playlist5: {
+        src: './playlist5.js',
+        dest: './playlist5.min.js'
       }
     },
     concat: {
@@ -17,12 +21,14 @@ module.exports = function(grunt) {
         separator: ';'
       },
       dist: {
-        src: ['./src/<%= pkg.name %>.js'],
-        dest: './<%= pkg.name %>.js'
+        files: {
+          './<%= pkg.name %>.js': ['./src/<%= pkg.name %>.js'],
+          './playlist5.js': ['./src/playlist5.js']
+        }
       }
     },
     jshint: {
-      files: ["./src/<%= pkg.name %>.js"],
+      files: ["./src/<%= pkg.name %>.js", './src/playlist5.js'],
       options: {
         "curly": true,
         "eqeqeq": true,
@@ -54,7 +60,7 @@ module.exports = function(grunt) {
     },
     exec: {
       copy_bower: {
-        cmd: 'cp ./<%= pkg.name %>*.js ./bower/; cp ./swf/*.swf ./bower/'
+        cmd: 'cp ./*.js ./bower/; cp ./swf/*.swf ./bower/'
       }
     }
   });
@@ -67,7 +73,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-exec');
 
   // Default task(s).
-  grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'concat', 'uglify:audio5', 'uglify:playlist5']);
   grunt.registerTask('bower', ['jshint', 'concat', 'uglify', 'exec:copy_bower']);
   grunt.registerTask('release', ['jshint', 'concat', 'uglify', 'exec:copy_bower', 'bump::patch']);
 
