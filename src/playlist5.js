@@ -60,7 +60,7 @@
       audioObj.on('ended', function() {
         var audio = playlist.next();
         if (audio) {
-          playlist.next();
+          audio.play();
         }
       });
     }
