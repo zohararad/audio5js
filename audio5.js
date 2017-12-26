@@ -723,8 +723,9 @@
      */
     play: function () {
       if(this.audio) {
-        this.audio.play();
+        var playPromise = this.audio.play();
         this.audio.playbackRate = this._rate;
+        return playPromise;
       }
     },
     /**
@@ -941,7 +942,7 @@
      */
     play: function () {
       if(!this.playing){
-        this.audio.play();
+        return this.audio.play();
       }
     },
     /**
