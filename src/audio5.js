@@ -135,16 +135,26 @@
       if (this.channels && this.channels.hasOwnProperty(evt)) {
         var args = Array.prototype.slice.call(arguments, 1);
         var a = [];
+        var b = [];
         while(this.channels[evt].length > 0) {
           var sub = this.channels[evt].shift();
-          if (typeof (sub.fn) === 'function') {
-            sub.fn.apply(sub.ctx, args);
-          }
+
           if ( !sub.once ){
-            a.push(sub);
+              a.push(sub);
           }
+
+          if (typeof (sub.fn) === 'function') {
+              b.push(sub);
+          }
+
         }
         this.channels[evt] = a;
+
+        // run all the event subscribers
+        while(b.length > 0) {
+            var eventSub = b.shift();
+            eventSub.fn.apply(eventSub.ctx, args);
+        }
       }
     }
   };
