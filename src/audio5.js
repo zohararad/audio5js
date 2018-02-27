@@ -134,17 +134,29 @@
     trigger: function (evt) {
       if (this.channels && this.channels.hasOwnProperty(evt)) {
         var args = Array.prototype.slice.call(arguments, 1);
-        var a = [];
+
+        // temp array to store all subscribers for the channel evt that is being triggered that must be executed.
+        var evtSubscribers = [];
+
         while(this.channels[evt].length > 0) {
           var sub = this.channels[evt].shift();
-          if (typeof (sub.fn) === 'function') {
-            sub.fn.apply(sub.ctx, args);
-          }
+
           if ( !sub.once ){
-            a.push(sub);
+            // for any channel event triggers that are not marked as once only, we need to keep.
+            this.channels[evt].push(sub);
+          }
+
+          // if we have a function with the channel subscription, store in temp array ready to call after all proceeded
+          if (typeof (sub.fn) === 'function') {
+              evtSubscribers.push(sub);
           }
         }
-        this.channels[evt] = a;
+
+        // run all the event subscribers - we call them after determining which ones should remain mapped for the evt
+        while(evtSubscribers.length > 0) {
+            var eventSub = evtSubscribers.shift();
+            eventSub.fn.apply(eventSub.ctx, args);
+        }
       }
     }
   };
@@ -723,8 +735,9 @@
      */
     play: function () {
       if(this.audio) {
-        this.audio.play();
+        var playPromise = this.audio.play();
         this.audio.playbackRate = this._rate;
+        return playPromise;
       }
     },
     /**
@@ -941,7 +954,7 @@
      */
     play: function () {
       if(!this.playing){
-        this.audio.play();
+        return this.audio.play();
       }
     },
     /**

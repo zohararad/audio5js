@@ -110,6 +110,40 @@ describe('Audio5 Callbacks', function(){
     });
   });
 
+  it('should be able to remove triggers from an event trigger', function(done){
+
+      var timeUpdateFuncCalled = 0;
+
+      var timeupdateFunc = function(position, duration) {
+          timeUpdateFuncCalled++;
+          if(timeUpdateFuncCalled === 1) {
+              // on time update listener, we might wish to remove a listener.
+              this.off('timeupdate', timeupdateFunc);
+          } else {
+              // force tests to fail
+              expect(timeUpdateFuncCalled).to.be.equal(1);
+          }
+      };
+
+      audio5 = new Audio5js({
+          swf_path: '../swf/audio5js.swf',
+          codecs: ['mp3'],
+          ready: function () {
+              var that = this;
+              this.on('timeupdate', timeupdateFunc, this);
+              this.load('./assets/sample.mp3');
+              this.play();
+
+              setTimeout(function() {
+                  that.pause();
+                  that.destroy();
+                  expect(timeUpdateFuncCalled).to.be.equal(1);
+                  done();
+              }.bind(this), 2500);
+          }
+      });
+  });
+
   it('should trigger ended event', function(done){
     audio5 = new Audio5js({
       swf_path: '../swf/audio5js.swf',
