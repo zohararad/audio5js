@@ -134,17 +134,35 @@
     trigger: function (evt) {
       if (this.channels && this.channels.hasOwnProperty(evt)) {
         var args = Array.prototype.slice.call(arguments, 1);
-        var a = [];
+
+        // temp array to store all subscribers for the channel evt that must be stored in state
+        var evtSubscribers = [];
+        // temp array to store all subscribers for the channel evt that is being triggered that must be executed.
+        var evtSubscribersForExec = [];
+
         while(this.channels[evt].length > 0) {
           var sub = this.channels[evt].shift();
-          if (typeof (sub.fn) === 'function') {
-            sub.fn.apply(sub.ctx, args);
-          }
+
           if ( !sub.once ){
-            a.push(sub);
+            // for any channel event triggers that are not marked as once only, we need to keep.
+            evtSubscribers.push(sub);
+          }
+
+          // if we have a function with the channel subscription, store in temp array ready to call after all proceeded
+          if (typeof (sub.fn) === 'function') {
+            // every subscriber we've processed will be executed
+            evtSubscribersForExec.push(sub);
           }
         }
-        this.channels[evt] = a;
+
+        // before we execute any of the subscribers to the trigger, we must make sure keep this.channels[evt] up to date in case any sub fns call off
+        this.channels[evt] = evtSubscribers;
+
+        // run all the event subscribers that need executing
+        while(evtSubscribersForExec.length > 0) {
+          var eventSub = evtSubscribersForExec.shift();
+          eventSub.fn.apply(eventSub.ctx, args);
+        }
       }
     }
   };
